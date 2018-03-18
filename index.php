@@ -38,6 +38,18 @@ foreach ($DRIVE_references as $reference) {
     //#1 - process reference (extract last 5 chars)
     $reference = UTILS_getBaseReference($reference);
     
+    //#2 - Get All Clients that subscribed that magazine (base reference)
+    $customersStampsToWaybill = DRIVE_getCustomersByRefSubscription($reference);
+    if($customersStampsToWaybill == null){
+        $msg = "No client subscribed magazine with Base ref: ".$reference."<br>";
+        logData($msg);
+        continue;
+    }
+    
+    //#3 - Get Full Client Record (for update dates later and NO/ESTAB bills)
+    $customersToWaybill = UTILS_prepareCustomersByStamps($customersStampsToWaybill);
+    
+    print_r(json_encode($customersToWaybill));
 
 
 }
@@ -183,7 +195,89 @@ function DRIVE_Request($ch, $url,$params){
 	return json_decode($response, true);
 }
 
+//#F - Call Drive to return a list of costumers with baseRef subscription
+function DRIVE_getCustomersByRefSubscription($baseRef){
+	global $ch;
 
+	// #1 - get Order By Id
+	$url = backendUrl . '/SearchWS/Query';
+
+    $params =  array('itemQuery' => '{
+        "entityName": "u6525_indutree_cl_magazines",
+        "distinct": true,
+        "lazyLoaded": false,
+        "SelectItems": [
+            "clstamp"
+        ],
+        "filterItems": [
+          {
+            "filterItem": "ref",
+            "valueItem": "'. $baseRef .'",
+            "comparison": 0,
+            "groupItem": 0
+          }
+        ],
+        "orderByItems": [],
+        "JoinEntities": [],
+        "groupByItems": []
+      }');
+
+    
+
+	$response=DRIVE_Request($ch, $url, $params);
+
+	if(empty($response)){
+		return false;
+	} else if(count($response['result']) == 0 ){
+		return null;
+	}
+
+    return $response['result'];
+}
+
+//#G - Call Drive to return a Customer by stamp
+function DRIVE_getCustomersByStamp($clstamp){
+	global $ch;
+
+	// #1 - get Order By Id
+	$url = backendUrl . '/SearchWS/QueryAsEntities';
+
+    $params =  array('itemQuery' => '{
+        "entityName": "Cl",
+        "distinct": true,
+        "lazyLoaded": false,
+        "SelectItems": [],
+        "filterItems": [
+          {
+            "filterItem": "clstamp",
+            "valueItem": "'. $clstamp .'",
+            "comparison": 0,
+            "groupItem": 1
+          },
+          {
+            "filterItem": "inactivo",
+            "valueItem": false,
+            "comparison": 0,
+            "groupItem": 0
+          }
+        ],
+        "orderByItems": [],
+        "JoinEntities": [],
+        "groupByItems": []
+      }');
+
+    
+
+	$response=DRIVE_Request($ch, $url, $params);
+
+	if(empty($response)){
+		return false;
+	} else if(count($response['result']) == 0 ){
+		return null;
+	}
+
+    return $response['result'][0];
+}
 
 /**
  * Utils Sections
@@ -208,6 +302,21 @@ function logData($data){
 //#B - Remove the last 5 chares from reference
 function UTILS_getBaseReference($reference){
     return substr($reference, 0, -5);
+}
+
+//#C - Get Full Customers Record based on stamp array
+function UTILS_prepareCustomersByStamps($stampArray){
+    $customerList = array();
+    //#1 - Iterate array
+    foreach($stampArray as $customerStamp){
+        $customerToAdd = DRIVE_getCustomersByStamp($customerStamp['clstamp']);
+        if($customerToAdd != null){
+            $customerList[] = $customerToAdd;
+        }
+    }
+
+    //#2 - Return the full list
+    return $customerList;
 }
 
 ?>
