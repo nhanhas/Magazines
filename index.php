@@ -6,8 +6,8 @@
  *****************************************************************/
 
 //#0 - Define some Constants
-define("consignNdoc"    , 1);
-define("refundNdoc"     , 1);
+define("consignNdoc"    , 16);
+define("refundNdoc"     , 18);
 define("backendUrl"     , "https://sis04.drivefx.net/45B784DD/PHCWS/REST"); //TODO CHANGE WITH CLIENT
 
 //#1 - Accept POST references
@@ -34,7 +34,9 @@ $WAYBILL_result = array();
 
 //#4 - Start with waybill MAIN iteration
 foreach ($DRIVE_references as $reference) {
-    
+    //The following is for use in BIZ_createDocument
+    $referenceFromMonth = $reference;
+
     //#1 - process reference (extract last 5 chars)
     $reference = UTILS_getBaseReference($reference);
     
@@ -49,13 +51,135 @@ foreach ($DRIVE_references as $reference) {
     //#3 - Get Full Client Record (for update dates later and NO/ESTAB bills)
     $customersToWaybill = UTILS_prepareCustomersByStamps($customersStampsToWaybill);
     
-    print_r(json_encode($customersToWaybill));
+    //Debug - How many Customers to waybill
+    //print_r(json_encode($customersToWaybill) . "<br><br>");
+
+    //#4 - iterate for each subscriber
+    foreach($customersToWaybill as $customer){
+        $wasIssuedThisMonth = UTILS_isSameMonth($customer['u6525_indutree_cl']['lastexpedition']);
+        
+        //#5 - Only waybill customer if last waybill was in last month
+        if($wasIssuedThisMonth){
+            $msg = "The customer ".$customer['nome']."(n.".$customer['no'].") already issued for ref: ".$reference."<br>";
+            logData($msg);
+            continue;
+        }
+
+        //#6 - Start creating Consign Doc
+        $newConsignWaybill = BIZ_createDocument(consignNdoc, $customer, $referenceFromMonth, 0);
+        if($newConsignWaybill == null){
+            $msg = "#ERROR# Creating Consign WayBill - customer ".$customer['nome']."(n.".$customer['no']."), ref: ".$reference."<br>";
+            logData($msg);
+            continue;
+        }
+
+        //#7 - Log the success of consign waybill
+        $msg = "#SUCCESS# Consign WayBill created with No.".$newConsignWaybill['fno']." - Customer ".$customer['nome']."(n.".$customer['no']."), ref: ".$reference."<br>";
+        logData($msg);
+
+
+        //#8 - Start creating Refund Doc
+        $newRefundWaybill = BIZ_createDocument(refundNdoc, $customer, $referenceFromMonth, 1);
+        if($newRefundWaybill == null){
+            $msg = "#ERROR# Creating Refund WayBill - customer ".$customer['nome']."(n.".$customer['no']."), ref: ".$reference."<br>";
+            logData($msg);
+            continue;
+        }
+
+        //#9 - Log the success of Refund waybill
+        $msg = "#SUCCESS# Refund WayBill created with No.".$newRefundWaybill['fno']." - Customer ".$customer['nome']."(n.".$customer['no']."), ref: ".$reference."<br>";
+        logData($msg);
+
+        //#10 - Update Consign to make reference of Refund
+        $newConsignWaybill['u6525_indutree_ft']['refund_ftstamp'] = $newRefundWaybill['ftstamp'];
+        $newConsignWaybill['u6525_indutree_ft']['refund_uniqueid'] = $newRefundWaybill['logInfo'];
+        $newConsignWaybill = DRIVE_saveInstance("Ft", $newConsignWaybill);
+
+
+        //#11 - Update Refund to make reference of Refund
+        $newRefundWaybill['u6525_indutree_ft']['refund_ftstamp'] = $newConsignWaybill['ftstamp'];
+        $newRefundWaybill['u6525_indutree_ft']['refund_uniqueid'] = $newConsignWaybill['logInfo'];
+        $newRefundWaybill = DRIVE_saveInstance("Ft", $newRefundWaybill);
+
+        exit(1);
+
+    }
 
 
 }
 
 
+/**
+ * BIZ of Creating Docs
+ */
+function BIZ_createDocument($ndoc, $customer, $reference, $invoiceType){
+    //#1 - Get an order new instance
+	$newInstanceFt = DRIVE_getNewInstance("Ft", $ndoc);
+	if($newInstanceFt == null){
+		$msg = "Error on getting new instance Ft. <br><br>";		
+		logData($msg);
+		return null;
+	}
+	
+	//#2 - Add customer no to order
+    $newInstanceFt['no'] = $customer['no'];
+    $newInstanceFt['estab'] = $customer['estab'];
 
+	//#2.1 - Then sync
+	$newInstanceFt = DRIVE_actEntiy("Ft", $newInstanceFt);
+	if($newInstanceFt == null){
+		$msg = "Error on act entity for Invoice. <br><br>";
+		logData($msg);
+		return null;
+    }
+    
+    //#3 - Now add reference
+    $productRow = array(
+        "ref" => $reference,
+        "qtt" => 0
+    );
+
+    //#3.1 - Set up quantity depending on 0 - Consign, 1 - Refund, 2 - Invoice
+    switch ($invoiceType) {
+        case 0:
+            $productRow['qtt'] = UTILS_getSubscribedQttByRef($customer, $reference);
+            break;
+        case 1:
+            $productRow['qtt'] = 0;
+            break;
+        case 2:
+            //TODO - Make diference between consign and refund
+            break;        
+    }
+
+    $newInstanceFt['fis'][] = $productRow;
+    
+    //#3.2 - Then sync
+    $newInstanceFt = DRIVE_actEntiy("Ft", $newInstanceFt);
+	if($newInstanceFt == null){
+		$msg = "Error on act entity for Invoice. <br><br>";
+		logData($msg);
+		return null;
+    }
+
+    //#3.3 - If type is 1 - Refund, then double sync for qtt = 0
+    if($invoiceType == 1){
+        $newInstanceFt['fis'][0]['qtt'] = 0;
+        $newInstanceFt = DRIVE_actEntiy("Ft", $newInstanceFt);
+    }
+
+    //#4 - Save Invoice
+	$newInstanceFt = DRIVE_saveInstance("Ft", $newInstanceFt);
+	if($newInstanceFt == null){
+		$msg = "Error on save entity for Invoice. <br><br>";		
+		logData($msg);
+		return null;
+	}
+    
+    //#5 - return it
+    return $newInstanceFt;
+    
+} 
 
 /**
  * DRIVE Section
@@ -141,7 +265,7 @@ function DRIVE_actEntiy($entity, $itemVO){
 		return null;
 	}
 	if(isset($response['messages'][0]['messageCodeLocale']) && $response['messages'][0]['messageCode'] != 'messages.Business.Stocks.InvalidRefAutoCreate'){
-		$msg = $response['messages'][0]['messageCodeLocale'];
+		$msg = $response['messages'][0]['messageCodeLocale'] ."<br>";
 		logData($msg);
 		return null;
 	}
@@ -317,6 +441,43 @@ function UTILS_prepareCustomersByStamps($stampArray){
 
     //#2 - Return the full list
     return $customerList;
+}
+
+//#D - Convert String to Date PHP - True/False
+function UTILS_isSameMonth($dateString){
+    //#1 - Create date object
+    $date = date_create($dateString);
+
+    //#2 - Format date
+    $formattedDate = date_format($date,"Y-m-d" );
+   
+    //means that is empty, so...is not same month
+    if($formattedDate == date('1900-01-01')){
+        return false;
+    }
+
+    //#3 - get month
+    $month = date("m", strtotime($formattedDate));
+    $presentMonth = date("m");
+
+    //#4 - return the month comparison
+    return $month == $presentMonth;
+
+}
+
+//#E - Get the quantity subscribed by reference
+function UTILS_getSubscribedQttByRef($customer, $reference){
+    $quantitySubscribed = 0;
+    //#1 - iterate subscriptions
+    foreach($customer['u6525_indutree_cl_magazines'] as $subscriptionLine){
+        if($subscriptionLine['ref'] == UTILS_getBaseReference($reference)){
+            //#2 - Quantity subscribed found!
+            $quantitySubscribed = $subscriptionLine['quantity'];
+        }
+    }
+
+    //#3 - return it
+    return $quantitySubscribed;
 }
 
 ?>
