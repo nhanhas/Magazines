@@ -512,3 +512,102 @@ Starting with waybill...<br>
 
 ----------------------2018-03-22 23:50:25----------------------
 #SUCCESS# Refund WayBill created with No.-4 - Customer Doree It Consulting Services(n.31), ref: VOGUE<br>
+
+----------------------2018-03-22 23:55:07----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-22 23:55:10----------------------
+#SUCCESS# Consign WayBill created with No.-1 - Customer Doree It Consulting Services(n.31), ref: VOGUE<br>
+
+----------------------2018-03-22 23:55:10----------------------
+#SUCCESS# Refund WayBill created with No.-4 - Customer Doree It Consulting Services(n.31), ref: VOGUE<br>
+
+----------------------2018-03-22 23:58:20----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-22 23:58:22----------------------
+Desculpe, mas a série deste documento é do tipo 'Documentos para transito de mercadorias (i.e. Guia de Remessa)' por isso os campos 'Data de Carga' e 'Hora de Carga' deste documento, são de preenchimento obrigatório.
+
+----------------------2018-03-22 23:58:22----------------------
+#ERROR# Updating Consign WayBill - customer Doree It Consulting Services(n.31), ref: VOGUE<br>
+
+----------------------2018-03-22 23:58:24----------------------
+Desculpe, mas a série deste documento é do tipo 'Documentos para transito de mercadorias (i.e. Guia de Remessa)' por isso os campos 'Data de Carga' e 'Hora de Carga' deste documento, são de preenchimento obrigatório.
+
+----------------------2018-03-22 23:58:24----------------------
+#ERROR# Updating Consign WayBill - customer GALP - Oeiras(n.3137680), ref: VOGUE<br>
+
+----------------------2018-03-22 23:58:26----------------------
+Desculpe, mas a série deste documento é do tipo 'Documentos para transito de mercadorias (i.e. Guia de Remessa)' por isso os campos 'Data de Carga' e 'Hora de Carga' deste documento, são de preenchimento obrigatório.
+
+----------------------2018-03-22 23:58:26----------------------
+#ERROR# Updating Consign WayBill - customer GALP - Lisboa(n.3137680), ref: VOGUE<br>
+
+----------------------2018-03-22 23:58:28----------------------
+Desculpe, mas a série deste documento é do tipo 'Documentos para transito de mercadorias (i.e. Guia de Remessa)' por isso os campos 'Data de Carga' e 'Hora de Carga' deste documento, são de preenchimento obrigatório.
+
+----------------------2018-03-22 23:58:28----------------------
+#ERROR# Updating Consign WayBill - customer GALP - Oeiras(n.3137680), ref: BGAMER<br>
+
+----------------------2018-03-23 00:04:14----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-23 00:04:16----------------------
+#SUCCESS# Consign WayBill created with No.-5 - Customer Doree It Consulting Services(n.31), ref: VOGUE<br>
+
+----------------------2018-03-23 00:04:16----------------------
+#SUCCESS# Refund WayBill created with No.-8 - Customer Doree It Consulting Services(n.31), ref: VOGUE<br>
+
+----------------------2018-03-23 00:05:49----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-23 00:05:52----------------------
+#SUCCESS# Consign WayBill created with No.-1 - Customer Doree It Consulting Services(n.31), ref: VOGUE<br>
+
+----------------------2018-03-23 00:05:52----------------------
+#SUCCESS# Refund WayBill created with No.-4 - Customer Doree It Consulting Services(n.31), ref: VOGUE<br>
+
+----------------------2018-03-23 00:05:53----------------------
+#SUCCESS# Consign WayBill created with No.-2 - Customer GALP - Oeiras(n.3137680), ref: VOGUE<br>
+
+----------------------2018-03-23 00:05:54----------------------
+#SUCCESS# Refund WayBill created with No.-5 - Customer GALP - Oeiras(n.3137680), ref: VOGUE<br>
+
+----------------------2018-03-23 00:05:55----------------------
+#SUCCESS# Consign WayBill created with No.-3 - Customer GALP - Lisboa(n.3137680), ref: VOGUE<br>
+
+----------------------2018-03-23 00:05:55----------------------
+#SUCCESS# Refund WayBill created with No.-6 - Customer GALP - Lisboa(n.3137680), ref: VOGUE<br>
+
+----------------------2018-03-23 00:05:57----------------------
+#SUCCESS# Consign WayBill created with No.-4 - Customer GALP - Oeiras(n.3137680), ref: BGAMER<br>
+
+----------------------2018-03-23 00:05:58----------------------
+#SUCCESS# Refund WayBill created with No.-7 - Customer GALP - Oeiras(n.3137680), ref: BGAMER<br>
+
+----------------------2018-03-23 00:16:21----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-23 00:16:23----------------------
+#SUCCESS# Consign WayBill created with No.-1 - Customer Doree It Consulting Services(n.31), ref: VOGUE<br>
+
+----------------------2018-03-23 00:16:23----------------------
+#SUCCESS# Refund WayBill created with No.-4 - Customer Doree It Consulting Services(n.31), ref: VOGUE<br>
+
+----------------------2018-03-23 00:16:25----------------------
+#SUCCESS# Consign WayBill created with No.-2 - Customer GALP - Oeiras(n.3137680), ref: VOGUE<br>
+
+----------------------2018-03-23 00:16:25----------------------
+#SUCCESS# Refund WayBill created with No.-5 - Customer GALP - Oeiras(n.3137680), ref: VOGUE<br>
+
+----------------------2018-03-23 00:16:27----------------------
+#SUCCESS# Consign WayBill created with No.-3 - Customer GALP - Lisboa(n.3137680), ref: VOGUE<br>
+
+----------------------2018-03-23 00:16:27----------------------
+#SUCCESS# Refund WayBill created with No.-6 - Customer GALP - Lisboa(n.3137680), ref: VOGUE<br>
+
+----------------------2018-03-23 00:16:29----------------------
+#SUCCESS# Consign WayBill created with No.-4 - Customer GALP - Oeiras(n.3137680), ref: BGAMER<br>
+
+----------------------2018-03-23 00:16:29----------------------
+#SUCCESS# Refund WayBill created with No.-7 - Customer GALP - Oeiras(n.3137680), ref: BGAMER<br>

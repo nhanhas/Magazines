@@ -72,13 +72,8 @@ foreach ($DRIVE_references as $reference) {
             logData($msg);
             continue;
         }
-
-        //#7 - Log the success of consign waybill
-        $msg = "#SUCCESS# Consign WayBill created with No.".$newConsignWaybill['fno']." - Customer ".$customer['nome']."(n.".$customer['no']."), ref: ".$reference."<br>";
-        logData($msg);
-
-
-        //#8 - Start creating Refund Doc
+       
+        //#7 - Start creating Refund Doc
         $newRefundWaybill = BIZ_createDocument(refundNdoc, $customer, $referenceFromMonth, 1);
         if($newRefundWaybill == null){
             $msg = "#ERROR# Creating Refund WayBill - customer ".$customer['nome']."(n.".$customer['no']."), ref: ".$reference."<br>";
@@ -86,22 +81,46 @@ foreach ($DRIVE_references as $reference) {
             continue;
         }
 
-        //#9 - Log the success of Refund waybill
-        $msg = "#SUCCESS# Refund WayBill created with No.".$newRefundWaybill['fno']." - Customer ".$customer['nome']."(n.".$customer['no']."), ref: ".$reference."<br>";
-        logData($msg);
-
-        //#10 - Update Consign to make reference of Refund
+        
+        //#8 - Update Consign to make reference of Refund
         $newConsignWaybill['u6525_indutree_ft']['refund_ftstamp'] = $newRefundWaybill['ftstamp'];
         $newConsignWaybill['u6525_indutree_ft']['refund_uniqueid'] = $newRefundWaybill['logInfo'];
         $newConsignWaybill = DRIVE_saveInstance("Ft", $newConsignWaybill);
+        if($newConsignWaybill == null){
+            $msg = "#ERROR# Updating Consign WayBill - customer ".$customer['nome']."(n.".$customer['no']."), ref: ".$reference."<br>";
+            logData($msg);
+            continue;
+        }
+           
+        //#9 - Sign consign 
+        //$newConsignWaybill = DRIVE_signDocument($newConsignWaybill);
+		if($newConsignWaybill == null){
+			$msg = "#ERROR# Updating Consign WayBill - customer ".$customer['nome']."(n.".$customer['no']."), ref: ".$reference."<br>";
+			logData($msg);
+			continue;
+        }
+                
+        //#10 - Log the success of consign waybill
+        $msg = "#SUCCESS# Consign WayBill created with No.".$newConsignWaybill['fno']." - Customer ".$customer['nome']."(n.".$customer['no']."), ref: ".$reference."<br>";
+        logData($msg);
+        
 
-
+        
         //#11 - Update Refund to make reference of Refund
         $newRefundWaybill['u6525_indutree_ft']['refund_ftstamp'] = $newConsignWaybill['ftstamp'];
         $newRefundWaybill['u6525_indutree_ft']['refund_uniqueid'] = $newConsignWaybill['logInfo'];
         $newRefundWaybill = DRIVE_saveInstance("Ft", $newRefundWaybill);
+        if($newRefundWaybill == null){
+            $msg = "#ERROR# Creating Refund WayBill - customer ".$customer['nome']."(n.".$customer['no']."), ref: ".$reference."<br>";
+            logData($msg);
+            continue;
+        }
+        
+        //#12 - Log the success of Refund waybill
+        $msg = "#SUCCESS# Refund WayBill created with No.".$newRefundWaybill['fno']." - Customer ".$customer['nome']."(n.".$customer['no']."), ref: ".$reference."<br>";
+        logData($msg);
 
-        exit(1);
+        echo "<br><br>";        
 
     }
 
@@ -167,6 +186,13 @@ function BIZ_createDocument($ndoc, $customer, $reference, $invoiceType){
         $newInstanceFt['fis'][0]['qtt'] = 0;
         $newInstanceFt = DRIVE_actEntiy("Ft", $newInstanceFt);
     }
+
+    //#3.4 - If type is 0 - Consign , Data Carga e Hora
+    if($invoiceType == 0){
+        /*$newInstanceFt['datacarga'] = 
+        $newInstanceFt['hcarga'] = */
+    }
+
 
     //#4 - Save Invoice
 	$newInstanceFt = DRIVE_saveInstance("Ft", $newInstanceFt);
@@ -401,6 +427,30 @@ function DRIVE_getCustomersByStamp($clstamp){
 	}
 
     return $response['result'][0];
+}
+
+//#H - Sign Document
+function DRIVE_signDocument($itemVO){
+
+	global $ch;
+
+	$url = backendUrl . "/FtWS/signDocument";
+	$params =  array('ftstamp' => $itemVO['ftstamp']);
+
+	$response=DRIVE_Request($ch, $url, $params);
+
+	//echo json_encode( $response );
+	if(empty($response)){
+		return null;
+	}
+	if(isset($response['messages'][0]['messageCodeLocale'])  && $response["messages"][0]["messageCode"] != "messages.saft.export.dt.webservice.successful"){
+		$msg = $response['messages'][0]['messageCodeLocale'];
+		logData($msg);
+		return null;
+	}
+
+
+	return $response['result'][0];
 }
 
 /**
