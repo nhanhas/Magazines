@@ -239,3 +239,75 @@ Customer Doree It Consulting Services(n.31) already waybilled in this script ite
 
 ----------------------2018-03-24 15:45:27----------------------
 Customer GALP - Lisboa(n.3137680) already waybilled in this script iteration <br><br>
+
+----------------------2018-03-24 15:57:57----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-24 15:58:00----------------------
+#SUCCESS# Consign WayBill created with No.-1 - Customer Doree It Consulting Services(n.31)<br>
+
+----------------------2018-03-24 15:58:00----------------------
+#SUCCESS# Refund WayBill created with No.-4 - Customer Doree It Consulting Services(n.31)<br>
+
+----------------------2018-03-24 15:58:02----------------------
+#SUCCESS# Consign WayBill created with No.-2 - Customer GALP - Oeiras(n.3137680)<br>
+
+----------------------2018-03-24 15:58:02----------------------
+#SUCCESS# Refund WayBill created with No.-5 - Customer GALP - Oeiras(n.3137680)<br>
+
+----------------------2018-03-24 15:58:03----------------------
+#SUCCESS# Consign WayBill created with No.-3 - Customer GALP - Lisboa(n.3137680)<br>
+
+----------------------2018-03-24 15:58:04----------------------
+#SUCCESS# Refund WayBill created with No.-6 - Customer GALP - Lisboa(n.3137680)<br>
+
+----------------------2018-03-24 15:58:04----------------------
+Customer GALP - Oeiras(n.3137680) already waybilled in this script iteration <br><br>
+
+----------------------2018-03-24 15:58:05----------------------
+Customer Doree It Consulting Services(n.31) already waybilled in this script iteration <br><br>
+
+----------------------2018-03-24 15:58:05----------------------
+Customer GALP - Lisboa(n.3137680) already waybilled in this script iteration <br><br>
+
+----------------------2018-03-24 15:58:48----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-24 15:58:49----------------------
+The customer Doree It Consulting Services(n.31) already issued <br><br>
+
+----------------------2018-03-24 15:58:49----------------------
+The customer GALP - Oeiras(n.3137680) already issued <br><br>
+
+----------------------2018-03-24 15:58:49----------------------
+The customer GALP - Lisboa(n.3137680) already issued <br><br>
+
+----------------------2018-03-24 15:58:50----------------------
+The customer GALP - Oeiras(n.3137680) already issued <br><br>
+
+----------------------2018-03-24 15:58:50----------------------
+The customer Doree It Consulting Services(n.31) already issued <br><br>
+
+----------------------2018-03-24 15:58:50----------------------
+The customer GALP - Lisboa(n.3137680) already issued <br><br>
+
+----------------------2018-03-24 15:59:20----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-24 15:59:21----------------------
+The customer Doree It Consulting Services(n.31) already issued for this month.<br><br>
+
+----------------------2018-03-24 15:59:21----------------------
+The customer GALP - Oeiras(n.3137680) already issued for this month.<br><br>
+
+----------------------2018-03-24 15:59:21----------------------
+The customer GALP - Lisboa(n.3137680) already issued for this month.<br><br>
+
+----------------------2018-03-24 15:59:21----------------------
+The customer GALP - Oeiras(n.3137680) already issued for this month.<br><br>
+
+----------------------2018-03-24 15:59:22----------------------
+The customer Doree It Consulting Services(n.31) already issued for this month.<br><br>
+
+----------------------2018-03-24 15:59:22----------------------
+The customer GALP - Lisboa(n.3137680) already issued for this month.<br><br>

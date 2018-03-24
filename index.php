@@ -69,7 +69,7 @@ foreach ($DRIVE_references as $reference) {
         
         //#5 - Only waybill customer if last waybill was in last month
         if($wasIssuedThisMonth){
-            $msg = "The customer ".$customer['nome']."(n.".$customer['no'].") already issued <br><br>";
+            $msg = "The customer ".$customer['nome']."(n.".$customer['no'].") already issued for this month.<br><br>";
             logData($msg);
             continue;
         }
@@ -129,8 +129,21 @@ foreach ($DRIVE_references as $reference) {
         $msg = "#SUCCESS# Refund WayBill created with No.".$newRefundWaybill['fno']." - Customer ".$customer['nome']."(n.".$customer['no'].")<br>";
         logData($msg);
 
-        //#13 - TODO - Update Cl for lastExpedition date
+        //#13 - Mark this customer as Already Waybilled
         $WAYBILL_customersAlreadyIssued[] = $customer['clstamp'];
+
+        //#14 - Update Cl for lastExpedition date
+        $customer['u6525_indutree_cl']['lastexpedition'] = UTILS_getPresentDate();
+        $customer = DRIVE_saveInstance("Cl", $customer);
+        if($customer == null){
+            $msg = "#ERROR# Update last expedition for customer  ".$customer['nome']."(n.".$customer['no'].") went wrong.<br><br>";
+            logData($msg);
+            continue;
+        }
+
+        
+        
+
         
         //print_r("<br><br>Clients issued<br><br>");
         //print_r($WAYBILL_customersAlreadyIssued);
@@ -561,6 +574,17 @@ function UTILS_getSubscribedStByRef($customer, $reference){
 
     //#3 - return it
     return $subscriptionArticle;
+}
+
+//#F - Get TODAY date 
+function UTILS_getPresentDate(){
+    $presentDay = date("d");
+    $presentMonth = date("m");
+    $presentYear = date("Y");
+
+    $date =  date("Y-m-d H:i:s",mktime(0,0,0,$presentMonth,$presentDay,$presentYear));
+
+    return $date;
 }
 
 ?>
