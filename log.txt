@@ -311,3 +311,249 @@ The customer Doree It Consulting Services(n.31) already issued for this month.<b
 
 ----------------------2018-03-24 15:59:22----------------------
 The customer GALP - Lisboa(n.3137680) already issued for this month.<br><br>
+
+----------------------2018-03-24 16:09:29----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-24 16:09:30----------------------
+Empty save
+
+----------------------2018-03-24 16:09:30----------------------
+Error on save entity for Invoice. <br><br>
+
+----------------------2018-03-24 16:09:30----------------------
+#ERROR# Creating Consign WayBill - customer Doree It Consulting Services(n.31)<br><br>
+
+----------------------2018-03-24 16:09:31----------------------
+Empty save
+
+----------------------2018-03-24 16:09:31----------------------
+Error on save entity for Invoice. <br><br>
+
+----------------------2018-03-24 16:09:31----------------------
+#ERROR# Creating Consign WayBill - customer GALP - Oeiras(n.3137680)<br><br>
+
+----------------------2018-03-24 16:09:31----------------------
+Empty save
+
+----------------------2018-03-24 16:09:31----------------------
+Error on save entity for Invoice. <br><br>
+
+----------------------2018-03-24 16:09:31----------------------
+#ERROR# Creating Consign WayBill - customer GALP - Lisboa(n.3137680)<br><br>
+
+----------------------2018-03-24 16:09:32----------------------
+Empty save
+
+----------------------2018-03-24 16:09:32----------------------
+Error on save entity for Invoice. <br><br>
+
+----------------------2018-03-24 16:09:32----------------------
+#ERROR# Creating Consign WayBill - customer GALP - Oeiras(n.3137680)<br><br>
+
+----------------------2018-03-24 16:09:33----------------------
+Empty save
+
+----------------------2018-03-24 16:09:33----------------------
+Error on save entity for Invoice. <br><br>
+
+----------------------2018-03-24 16:09:33----------------------
+#ERROR# Creating Consign WayBill - customer Doree It Consulting Services(n.31)<br><br>
+
+----------------------2018-03-24 16:09:33----------------------
+Empty save
+
+----------------------2018-03-24 16:09:33----------------------
+Error on save entity for Invoice. <br><br>
+
+----------------------2018-03-24 16:09:33----------------------
+#ERROR# Creating Consign WayBill - customer GALP - Lisboa(n.3137680)<br><br>
+
+----------------------2018-03-24 16:11:53----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-24 16:11:55----------------------
+#SUCCESS# Consign WayBill created with No.-1 - Customer Doree It Consulting Services(n.31)<br>
+
+----------------------2018-03-24 16:11:55----------------------
+#SUCCESS# Refund WayBill created with No.-4 - Customer Doree It Consulting Services(n.31)<br>
+
+----------------------2018-03-24 16:11:57----------------------
+#SUCCESS# Consign WayBill created with No.-2 - Customer GALP - Oeiras(n.3137680)<br>
+
+----------------------2018-03-24 16:11:57----------------------
+#SUCCESS# Refund WayBill created with No.-5 - Customer GALP - Oeiras(n.3137680)<br>
+
+----------------------2018-03-24 16:11:59----------------------
+#SUCCESS# Consign WayBill created with No.-3 - Customer GALP - Lisboa(n.3137680)<br>
+
+----------------------2018-03-24 16:11:59----------------------
+#SUCCESS# Refund WayBill created with No.-6 - Customer GALP - Lisboa(n.3137680)<br>
+
+----------------------2018-03-24 16:11:59----------------------
+Customer GALP - Oeiras(n.3137680) already waybilled in this script iteration <br><br>
+
+----------------------2018-03-24 16:12:00----------------------
+Customer Doree It Consulting Services(n.31) already waybilled in this script iteration <br><br>
+
+----------------------2018-03-24 16:12:00----------------------
+Customer GALP - Lisboa(n.3137680) already waybilled in this script iteration <br><br>
+
+----------------------2018-03-24 16:13:14----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-24 16:13:16----------------------
+A morada do documento deve estar preenchida
+
+----------------------2018-03-24 16:13:16----------------------
+#ERROR# Sign Consign WayBill - customer Doree It Consulting Services(n.31)<br><br>
+
+----------------------2018-03-24 16:13:18----------------------
+A morada do documento deve estar preenchida
+
+----------------------2018-03-24 16:13:18----------------------
+#ERROR# Sign Consign WayBill - customer GALP - Oeiras(n.3137680)<br><br>
+
+----------------------2018-03-24 16:13:19----------------------
+A morada do documento deve estar preenchida
+
+----------------------2018-03-24 16:13:19----------------------
+#ERROR# Sign Consign WayBill - customer GALP - Lisboa(n.3137680)<br><br>
+
+----------------------2018-03-24 16:13:21----------------------
+A morada do documento deve estar preenchida
+
+----------------------2018-03-24 16:13:21----------------------
+#ERROR# Sign Consign WayBill - customer GALP - Oeiras(n.3137680)<br><br>
+
+----------------------2018-03-24 16:13:24----------------------
+A morada do documento deve estar preenchida
+
+----------------------2018-03-24 16:13:24----------------------
+#ERROR# Sign Consign WayBill - customer Doree It Consulting Services(n.31)<br><br>
+
+----------------------2018-03-24 16:13:25----------------------
+A morada do documento deve estar preenchida
+
+----------------------2018-03-24 16:13:25----------------------
+#ERROR# Sign Consign WayBill - customer GALP - Lisboa(n.3137680)<br><br>
+
+----------------------2018-03-24 16:15:57----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-24 16:15:59----------------------
+O código postal da morada do documento não obedece ao formato XXXX-XXX onde X é um digito de 0 a 9
+
+----------------------2018-03-24 16:15:59----------------------
+#ERROR# Sign Consign WayBill - customer Doree It Consulting Services(n.31)<br><br>
+
+----------------------2018-03-24 16:16:01----------------------
+O código postal da morada do documento não obedece ao formato XXXX-XXX onde X é um digito de 0 a 9
+
+----------------------2018-03-24 16:16:01----------------------
+#ERROR# Sign Consign WayBill - customer GALP - Oeiras(n.3137680)<br><br>
+
+----------------------2018-03-24 16:16:03----------------------
+O código postal da morada do documento não obedece ao formato XXXX-XXX onde X é um digito de 0 a 9
+
+----------------------2018-03-24 16:16:03----------------------
+#ERROR# Sign Consign WayBill - customer GALP - Lisboa(n.3137680)<br><br>
+
+----------------------2018-03-24 16:16:05----------------------
+O código postal da morada do documento não obedece ao formato XXXX-XXX onde X é um digito de 0 a 9
+
+----------------------2018-03-24 16:16:05----------------------
+#ERROR# Sign Consign WayBill - customer GALP - Oeiras(n.3137680)<br><br>
+
+----------------------2018-03-24 16:16:08----------------------
+O código postal da morada do documento não obedece ao formato XXXX-XXX onde X é um digito de 0 a 9
+
+----------------------2018-03-24 16:16:08----------------------
+#ERROR# Sign Consign WayBill - customer Doree It Consulting Services(n.31)<br><br>
+
+----------------------2018-03-24 16:16:10----------------------
+O código postal da morada do documento não obedece ao formato XXXX-XXX onde X é um digito de 0 a 9
+
+----------------------2018-03-24 16:16:10----------------------
+#ERROR# Sign Consign WayBill - customer GALP - Lisboa(n.3137680)<br><br>
+
+----------------------2018-03-24 16:17:43----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-24 16:17:45----------------------
+O código postal da morada do documento não obedece ao formato XXXX-XXX onde X é um digito de 0 a 9
+
+----------------------2018-03-24 16:17:45----------------------
+#ERROR# Sign Consign WayBill - customer Doree It Consulting Services(n.31)<br><br>
+
+----------------------2018-03-24 16:17:47----------------------
+O código postal da morada do documento não obedece ao formato XXXX-XXX onde X é um digito de 0 a 9
+
+----------------------2018-03-24 16:17:47----------------------
+#ERROR# Sign Consign WayBill - customer GALP - Oeiras(n.3137680)<br><br>
+
+----------------------2018-03-24 16:17:48----------------------
+O código postal da morada do documento não obedece ao formato XXXX-XXX onde X é um digito de 0 a 9
+
+----------------------2018-03-24 16:17:48----------------------
+#ERROR# Sign Consign WayBill - customer GALP - Lisboa(n.3137680)<br><br>
+
+----------------------2018-03-24 16:17:49----------------------
+Customer GALP - Oeiras(n.3137680) already waybilled in this script iteration <br><br>
+
+----------------------2018-03-24 16:17:49----------------------
+Customer Doree It Consulting Services(n.31) already waybilled in this script iteration <br><br>
+
+----------------------2018-03-24 16:17:49----------------------
+Customer GALP - Lisboa(n.3137680) already waybilled in this script iteration <br><br>
+
+----------------------2018-03-24 16:18:59----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-24 16:19:03----------------------
+#SUCCESS# Consign WayBill created with No.2 - Customer Doree It Consulting Services(n.31)<br>
+
+----------------------2018-03-24 16:19:03----------------------
+#SUCCESS# Refund WayBill created with No.-7 - Customer Doree It Consulting Services(n.31)<br>
+
+----------------------2018-03-24 16:19:05----------------------
+#SUCCESS# Consign WayBill created with No.3 - Customer GALP - Oeiras(n.3137680)<br>
+
+----------------------2018-03-24 16:19:05----------------------
+#SUCCESS# Refund WayBill created with No.-8 - Customer GALP - Oeiras(n.3137680)<br>
+
+----------------------2018-03-24 16:19:07----------------------
+#SUCCESS# Consign WayBill created with No.4 - Customer GALP - Lisboa(n.3137680)<br>
+
+----------------------2018-03-24 16:19:07----------------------
+#SUCCESS# Refund WayBill created with No.-9 - Customer GALP - Lisboa(n.3137680)<br>
+
+----------------------2018-03-24 16:19:08----------------------
+Customer GALP - Oeiras(n.3137680) already waybilled in this script iteration <br><br>
+
+----------------------2018-03-24 16:19:08----------------------
+Customer Doree It Consulting Services(n.31) already waybilled in this script iteration <br><br>
+
+----------------------2018-03-24 16:19:08----------------------
+Customer GALP - Lisboa(n.3137680) already waybilled in this script iteration <br><br>
+
+----------------------2018-03-24 16:21:24----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-24 16:21:25----------------------
+The customer Doree It Consulting Services(n.31) already issued for this month.<br><br>
+
+----------------------2018-03-24 16:21:25----------------------
+The customer GALP - Oeiras(n.3137680) already issued for this month.<br><br>
+
+----------------------2018-03-24 16:21:25----------------------
+The customer GALP - Lisboa(n.3137680) already issued for this month.<br><br>
+
+----------------------2018-03-24 16:21:25----------------------
+The customer GALP - Oeiras(n.3137680) already issued for this month.<br><br>
+
+----------------------2018-03-24 16:21:26----------------------
+The customer Doree It Consulting Services(n.31) already issued for this month.<br><br>
+
+----------------------2018-03-24 16:21:26----------------------
+The customer GALP - Lisboa(n.3137680) already issued for this month.<br><br>

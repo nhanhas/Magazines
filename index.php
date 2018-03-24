@@ -14,6 +14,7 @@ define("backendUrl"     , "https://sis04.drivefx.net/45B784DD/PHCWS/REST"); //TO
 $inputJSON = file_get_contents('php://input');
 $DRIVE_credentials  = json_decode($inputJSON)->credentials;
 $DRIVE_references   = json_decode($inputJSON)->products;
+$DRIVE_waybillConfig   = json_decode($inputJSON)->waybillConfig;
 print_r($DRIVE_references); //Debug References
 
 /*****************************************************************/
@@ -74,6 +75,9 @@ foreach ($DRIVE_references as $reference) {
             continue;
         }
 
+        //#5.1 - Mark this customer as Already Waybilled
+        $WAYBILL_customersAlreadyIssued[] = $customer['clstamp'];
+
         //#6 - Start creating Consign Doc
         $newConsignWaybill = BIZ_createDocument(consignNdoc, $customer, $DRIVE_references, 0);
         if($newConsignWaybill == null){
@@ -102,9 +106,9 @@ foreach ($DRIVE_references as $reference) {
         }
            
         //#9 - Sign consign 
-        //$newConsignWaybill = DRIVE_signDocument($newConsignWaybill);
+        $newConsignWaybill = DRIVE_signDocument($newConsignWaybill);
 		if($newConsignWaybill == null){
-			$msg = "#ERROR# Updating Consign WayBill - customer ".$customer['nome']."(n.".$customer['no'].")<br><br>";
+			$msg = "#ERROR# Sign Consign WayBill - customer ".$customer['nome']."(n.".$customer['no'].")<br><br>";
 			logData($msg);
 			continue;
         }
@@ -129,10 +133,7 @@ foreach ($DRIVE_references as $reference) {
         $msg = "#SUCCESS# Refund WayBill created with No.".$newRefundWaybill['fno']." - Customer ".$customer['nome']."(n.".$customer['no'].")<br>";
         logData($msg);
 
-        //#13 - Mark this customer as Already Waybilled
-        $WAYBILL_customersAlreadyIssued[] = $customer['clstamp'];
-
-        //#14 - Update Cl for lastExpedition date
+        //#13 - Update Cl for lastExpedition date
         $customer['u6525_indutree_cl']['lastexpedition'] = UTILS_getPresentDate();
         $customer = DRIVE_saveInstance("Cl", $customer);
         if($customer == null){
@@ -164,6 +165,8 @@ foreach ($DRIVE_references as $reference) {
  * BIZ of Creating Docs
  */
 function BIZ_createDocument($ndoc, $customer, $allRequestedReferences, $invoiceType){
+    global $DRIVE_waybillConfig;
+
     //#1 - Get an order new instance
 	$newInstanceFt = DRIVE_getNewInstance("Ft", $ndoc);
 	if($newInstanceFt == null){
@@ -235,8 +238,8 @@ function BIZ_createDocument($ndoc, $customer, $allRequestedReferences, $invoiceT
 
     //#3.7 - If type is 0 - Consign , Data Carga e Hora
     if($invoiceType == 0){
-        /*$newInstanceFt['datacarga'] = 
-        $newInstanceFt['hcarga'] = */
+        $newInstanceFt['datacarga'] = date('Y-m-d H:i:s',strtotime($DRIVE_waybillConfig->loadDate));
+        $newInstanceFt['hcarga'] = $DRIVE_waybillConfig->loadHour;
     }
 
 
