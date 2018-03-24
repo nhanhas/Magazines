@@ -31,6 +31,7 @@ if($loginResult == false){
 
 //#3 - Create an result Array of creation/errors
 $WAYBILL_result = array(); 
+$WAYBILL_customersAlreadyIssued = array(); 
 
 //#4 - Start with waybill MAIN iteration
 foreach ($DRIVE_references as $reference) {
@@ -56,27 +57,35 @@ foreach ($DRIVE_references as $reference) {
 
     //#4 - iterate for each subscriber
     foreach($customersToWaybill as $customer){
+        //#4.1 - Check if this customer (clstamp) was been already issued in this script
+        if (in_array($customer['clstamp'], $WAYBILL_customersAlreadyIssued)){
+            //means that we already waybilled this customer in another ref iteration in this script
+            $msg = "Customer ".$customer['nome']."(n.".$customer['no'].") already waybilled in this script iteration <br><br>";
+            logData($msg);
+            continue;
+        }
+
         $wasIssuedThisMonth = UTILS_isSameMonth($customer['u6525_indutree_cl']['lastexpedition']);
         
         //#5 - Only waybill customer if last waybill was in last month
         if($wasIssuedThisMonth){
-            $msg = "The customer ".$customer['nome']."(n.".$customer['no'].") already issued for ref: ".$reference."<br>";
+            $msg = "The customer ".$customer['nome']."(n.".$customer['no'].") already issued <br><br>";
             logData($msg);
             continue;
         }
 
         //#6 - Start creating Consign Doc
-        $newConsignWaybill = BIZ_createDocument(consignNdoc, $customer, $referenceFromMonth, 0);
+        $newConsignWaybill = BIZ_createDocument(consignNdoc, $customer, $DRIVE_references, 0);
         if($newConsignWaybill == null){
-            $msg = "#ERROR# Creating Consign WayBill - customer ".$customer['nome']."(n.".$customer['no']."), ref: ".$reference."<br>";
+            $msg = "#ERROR# Creating Consign WayBill - customer ".$customer['nome']."(n.".$customer['no'].")<br><br>";
             logData($msg);
             continue;
         }
        
         //#7 - Start creating Refund Doc
-        $newRefundWaybill = BIZ_createDocument(refundNdoc, $customer, $referenceFromMonth, 1);
+        $newRefundWaybill = BIZ_createDocument(refundNdoc, $customer, $DRIVE_references, 1);
         if($newRefundWaybill == null){
-            $msg = "#ERROR# Creating Refund WayBill - customer ".$customer['nome']."(n.".$customer['no']."), ref: ".$reference."<br>";
+            $msg = "#ERROR# Creating Refund WayBill - customer ".$customer['nome']."(n.".$customer['no'].")<br><br>";
             logData($msg);
             continue;
         }
@@ -87,7 +96,7 @@ foreach ($DRIVE_references as $reference) {
         $newConsignWaybill['u6525_indutree_ft']['refund_uniqueid'] = $newRefundWaybill['logInfo'];
         $newConsignWaybill = DRIVE_saveInstance("Ft", $newConsignWaybill);
         if($newConsignWaybill == null){
-            $msg = "#ERROR# Updating Consign WayBill - customer ".$customer['nome']."(n.".$customer['no']."), ref: ".$reference."<br>";
+            $msg = "#ERROR# Updating Consign WayBill - customer ".$customer['nome']."(n.".$customer['no'].")<br><br>";
             logData($msg);
             continue;
         }
@@ -95,13 +104,13 @@ foreach ($DRIVE_references as $reference) {
         //#9 - Sign consign 
         //$newConsignWaybill = DRIVE_signDocument($newConsignWaybill);
 		if($newConsignWaybill == null){
-			$msg = "#ERROR# Updating Consign WayBill - customer ".$customer['nome']."(n.".$customer['no']."), ref: ".$reference."<br>";
+			$msg = "#ERROR# Updating Consign WayBill - customer ".$customer['nome']."(n.".$customer['no'].")<br><br>";
 			logData($msg);
 			continue;
         }
                 
         //#10 - Log the success of consign waybill
-        $msg = "#SUCCESS# Consign WayBill created with No.".$newConsignWaybill['fno']." - Customer ".$customer['nome']."(n.".$customer['no']."), ref: ".$reference."<br>";
+        $msg = "#SUCCESS# Consign WayBill created with No.".$newConsignWaybill['fno']." - Customer ".$customer['nome']."(n.".$customer['no'].")<br>";
         logData($msg);
         
 
@@ -111,17 +120,27 @@ foreach ($DRIVE_references as $reference) {
         $newRefundWaybill['u6525_indutree_ft']['refund_uniqueid'] = $newConsignWaybill['logInfo'];
         $newRefundWaybill = DRIVE_saveInstance("Ft", $newRefundWaybill);
         if($newRefundWaybill == null){
-            $msg = "#ERROR# Creating Refund WayBill - customer ".$customer['nome']."(n.".$customer['no']."), ref: ".$reference."<br>";
+            $msg = "#ERROR# Creating Refund WayBill - customer ".$customer['nome']."(n.".$customer['no'].")<br><br>";
             logData($msg);
             continue;
         }
         
         //#12 - Log the success of Refund waybill
-        $msg = "#SUCCESS# Refund WayBill created with No.".$newRefundWaybill['fno']." - Customer ".$customer['nome']."(n.".$customer['no']."), ref: ".$reference."<br>";
+        $msg = "#SUCCESS# Refund WayBill created with No.".$newRefundWaybill['fno']." - Customer ".$customer['nome']."(n.".$customer['no'].")<br>";
         logData($msg);
 
-        echo "<br><br>";        
+        //#13 - TODO - Update Cl for lastExpedition date
+        $WAYBILL_customersAlreadyIssued[] = $customer['clstamp'];
+        
+        //print_r("<br><br>Clients issued<br><br>");
+        //print_r($WAYBILL_customersAlreadyIssued);
 
+
+
+
+
+        echo "<br><br>";        
+        //exit(1);//try only 1 iteration
     }
 
 
@@ -131,11 +150,11 @@ foreach ($DRIVE_references as $reference) {
 /**
  * BIZ of Creating Docs
  */
-function BIZ_createDocument($ndoc, $customer, $reference, $invoiceType){
+function BIZ_createDocument($ndoc, $customer, $allRequestedReferences, $invoiceType){
     //#1 - Get an order new instance
 	$newInstanceFt = DRIVE_getNewInstance("Ft", $ndoc);
 	if($newInstanceFt == null){
-		$msg = "Error on getting new instance Ft. <br><br>";		
+		$msg = "Error on getting new instance Ft. <br>";		
 		logData($msg);
 		return null;
 	}
@@ -147,47 +166,61 @@ function BIZ_createDocument($ndoc, $customer, $reference, $invoiceType){
 	//#2.1 - Then sync
 	$newInstanceFt = DRIVE_actEntiy("Ft", $newInstanceFt);
 	if($newInstanceFt == null){
-		$msg = "Error on act entity for Invoice. <br><br>";
+		$msg = "Error on act entity for Invoice. <br>";
 		logData($msg);
 		return null;
     }
     
-    //#3 - Now add reference
-    $productRow = array(
-        "ref" => $reference,
-        "qtt" => 0
-    );
+    //#3 - Now add references - NOTE: $reference in foreach is not a base product
+    foreach($allRequestedReferences as $reference){
+        //#3.1 - try to get reference subscribed for this client
+        $subscribedArticle = UTILS_getSubscribedStByRef($customer, $reference);
+        if($subscribedArticle == null){
+            //means that this client does not subscribed this article
+            continue;
+        }
+        //#3.2 - Otherwise, add to Document row
+        $productRow = array(
+            "ref" => $reference,
+            "qtt" => 0
+        );
 
-    //#3.1 - Set up quantity depending on 0 - Consign, 1 - Refund, 2 - Invoice
-    switch ($invoiceType) {
-        case 0:
-            $productRow['qtt'] = UTILS_getSubscribedQttByRef($customer, $reference);
-            break;
-        case 1:
-            $productRow['qtt'] = 0;
-            break;
-        case 2:
-            //TODO - Make diference between consign and refund
-            break;        
+         //#3.3 - Set up quantity depending on 0 - Consign, 1 - Refund, 2 - Invoice
+        switch ($invoiceType) {
+            case 0:
+                $productRow['qtt'] = $subscribedArticle['quantity'];
+                break;
+            case 1:
+                $productRow['qtt'] = 0;
+                break;
+            case 2:
+                //TODO - Make diference between consign and refund
+                break;        
+        }
+
+        //3.4 - Add it!
+        $newInstanceFt['fis'][] = $productRow;
+
     }
-
-    $newInstanceFt['fis'][] = $productRow;
+     
     
-    //#3.2 - Then sync
+    //#3.5 - Then sync
     $newInstanceFt = DRIVE_actEntiy("Ft", $newInstanceFt);
 	if($newInstanceFt == null){
-		$msg = "Error on act entity for Invoice. <br><br>";
+		$msg = "Error on act entity for Invoice. <br>";
 		logData($msg);
 		return null;
     }
 
-    //#3.3 - If type is 1 - Refund, then double sync for qtt = 0
+    //#3.6 - If type is 1 - Refund, then double sync for qtt = 0
     if($invoiceType == 1){
-        $newInstanceFt['fis'][0]['qtt'] = 0;
+        for ($i = 0; $i < sizeof($newInstanceFt['fis']); $i++) {
+            $newInstanceFt['fis'][$i]['qtt'] = 0;
+        }         
         $newInstanceFt = DRIVE_actEntiy("Ft", $newInstanceFt);
     }
 
-    //#3.4 - If type is 0 - Consign , Data Carga e Hora
+    //#3.7 - If type is 0 - Consign , Data Carga e Hora
     if($invoiceType == 0){
         /*$newInstanceFt['datacarga'] = 
         $newInstanceFt['hcarga'] = */
@@ -516,18 +549,18 @@ function UTILS_isSameMonth($dateString){
 }
 
 //#E - Get the quantity subscribed by reference
-function UTILS_getSubscribedQttByRef($customer, $reference){
-    $quantitySubscribed = 0;
+function UTILS_getSubscribedStByRef($customer, $reference){
+    $subscriptionArticle = null;
     //#1 - iterate subscriptions
     foreach($customer['u6525_indutree_cl_magazines'] as $subscriptionLine){
         if($subscriptionLine['ref'] == UTILS_getBaseReference($reference)){
-            //#2 - Quantity subscribed found!
-            $quantitySubscribed = $subscriptionLine['quantity'];
+            //#2 - subscription for this article(ref) found!
+            $subscriptionArticle = $subscriptionLine;
         }
     }
 
     //#3 - return it
-    return $quantitySubscribed;
+    return $subscriptionArticle;
 }
 
 ?>
