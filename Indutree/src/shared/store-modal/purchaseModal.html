@@ -1,0 +1,101 @@
+<div class="purchaseModal">
+    <div class="modal-header" id="modal-header">
+        <h1>{{ title | translate}}</h1>
+    </div>
+
+    <div class="modal-body text-center" id="modal-body">
+       
+        <div class="info-label">
+            <div style="position:relative; width:190px;     margin: 0 auto;">
+                <span style="font-size: 69px;
+                            position: absolute;
+                            top: 3px;
+                            right: 78px;"><i class="fa fa-puzzle-piece"></i></span>
+                <span style="font-size: 69px;
+                            position: absolute;
+                            top: 0px;
+                            right: 20px;
+                            transform: rotate(-30deg);
+                            color: #ff5d4e;"><i class="fa fa-puzzle-piece fa-rotate-90 "></i></span>
+                
+                <span style="font-size: 69px;
+                            position: absolute;
+                            top: 56px;
+                            right: 58px;"><i class="fa fa-puzzle-piece fa-rotate-180"></i></span>
+
+                <span style="font-size: 70px;
+                            position: absolute;
+                            top: 38px;
+                            right: 94px;"><i class="fa fa-puzzle-piece fa-rotate-270"></i></span>
+
+            </div>
+            <br>
+            <div style="margin-top: 140px;">{{'ADDON.DETAILS.INSTALL.INFO.LABEL' | translate}}</div>
+        </div>
+
+        <div class="terms-label">
+
+            <!--<label>
+                <input type="checkbox" ng-model="termsAccepted">
+                Li e aceito os termos e condições
+            </label>-->
+
+            <store-checkbox model="termsAccepted" label="{{'ADDON.DETAILS.TERMOS.LABEL' | translate}}" url="termsUrl"></store-checkbox>
+            
+        </div>
+
+    </div>
+
+
+    <div class="modal-footer">
+        <div class="col-xs-12 col-md-6 text-left">
+            <store-button   label="{{'ADDON.DETAILS.CLOSE.BTN.LABEL' | translate}}"  
+                    icon = "fa-times"
+                    action = "cancel"
+                    on-enter="onDismissModal()" ></store-button>                            
+        </div>
+
+         <!-- if is product or addon to purchase -->
+        <div ng-if="!toRemove">
+            <div class="col-xs-12 col-md-6 text-left" ng-show="!loading">
+                <store-button   label="Confirmar"  
+                        icon = "fa-check"
+                        action = "confirm" 
+                        on-enter="onPurchase()" 
+                        inactive="!termsAccepted"></store-button>                            
+            </div>
+
+            <!-- this is a loading button -->
+            <div class="col-xs-12 col-md-6 text-left" ng-show="loading"> 
+                <store-button   label="A instalar..."   
+                        icon = "fa-spinner fa-spin"
+                        action = "confirm"
+                        inactive="!termsAccepted"></store-button>                            
+            </div>
+        </div>
+
+        <!-- if is product and is to remove -->
+        <div ng-if="toRemove">
+            <div class="col-xs-12 col-md-6 text-left" ng-show="!loading">
+                <store-button   label="Desinstalar"  
+                        icon = "fa-check"
+                        action = "confirm"
+                        on-enter="onRemovePurchase()" 
+                        inactive="!termsAccepted"></store-button>                            
+            </div>
+
+            <!-- this is a loading button -->
+            <div class="col-xs-12 col-md-6 text-left" ng-show="loading"> 
+                <store-button   label="A desinstalar..."   
+                        icon = "fa-spinner fa-spin"
+                        action = "confirm"
+                        inactive="!termsAccepted"></store-button>                            
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+

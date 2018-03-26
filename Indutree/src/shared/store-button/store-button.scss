@@ -1,0 +1,65 @@
+.store-button{
+   
+    margin-top: 10px;
+    float: initial !important;
+    //width: 260px;
+    padding-left: 0px;
+    cursor: pointer;
+    position:relative; 
+
+    .button-box{
+        
+        padding: 13px;
+        color:white;
+        padding-left: 60px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-right: 40px;
+        position: relative;
+    }
+    .button-box-arrow{
+        float: right;
+        margin-top: -4px;
+        position: absolute;
+        right: 10px;
+    }
+
+    .button-icon{
+        float: left;
+        margin-right: 10px;
+        height: 45px;
+        width: 45px;
+        text-align: center;
+        padding-top: 10px;
+        color: white;
+        position: absolute;
+        top:0;
+        background-color: rgba(0,0,0,0.15);
+    }
+
+
+    a{
+        text-decoration: none;
+    }
+
+
+    .action-confirm{
+        background-color: rgba(255,93,78,1);
+    }
+
+    .action-cancel{
+        background-color: #535353;
+    }
+
+    .action-confirm-inactive{
+        background-color: rgba(255,93,78,1);
+        opacity: 0.5;
+    }
+
+    &.inactive-button{
+        cursor: initial !important;
+        pointer-events: none !important;
+    }
+
+}

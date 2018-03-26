@@ -1,0 +1,59 @@
+<!-- picasso layout -->
+<div class="store-button" ng-if="layout === 'default'" ng-class="{'inactive-button' : inactive === true}">
+    
+    <div ng-show="!inactive">
+        <a ng-click="buttonPressed()">
+            <div class="button-box" ng-class="{'action-confirm' : action === 'confirm', 'action-cancel' : action === 'cancel' }">    
+                <span>{{label}}</span> 
+                <span class="button-box-arrow"><i class="fa fa-2x fa-chevron-right"></i></span>
+            </div>
+        </a>
+        <div class="button-icon">
+            <span class="icon">
+                <i class="fa fa-2x {{icon}}"></i>
+            </span>
+        </div>
+    </div>
+
+    <!-- disabled -->
+    <div class="inactive-button" ng-show="inactive">
+        <a>
+            <div class="button-box" ng-class="{'action-confirm-inactive' : action === 'confirm', 'action-cancel-inactive' : action === 'cancel' }">    
+                <span>{{label}}</span> 
+                <span class="button-box-arrow"><i class="fa fa-2x fa-chevron-right"></i></span>
+            </div>
+        </a>
+        <div class="button-icon">
+            <span class="icon">
+                <i class="fa fa-2x {{icon}}"></i>
+            </span>
+        </div>
+    </div>
+
+</div>
+
+<!-- minimal layout -->
+<div class="store-button" ng-if="layout === 'minimal'" ng-class="{'inactive-button' : inactive === true}">
+    
+    <div ng-show="!inactive">
+        <a ng-click="buttonPressed()">
+            <span><i class="fa fa-lg fa-chevron-left"></i> &nbsp;{{label}}</span> 
+        </a>        
+    </div>
+
+    <!-- disabled -->
+    <div class="inactive-button" ng-show="inactive">
+        <a>
+            <div class="button-box" ng-class="{'action-confirm-inactive' : action === 'confirm', 'action-cancel-inactive' : action === 'cancel' }">    
+                <span>{{label}}</span> 
+                <span class="button-box-arrow"><i class="fa fa-2x fa-chevron-right"></i></span>
+            </div>
+        </a>
+        <div class="button-icon">
+            <span class="icon">
+                <i class="fa fa-2x {{icon}}"></i>
+            </span>
+        </div>
+    </div>
+
+</div>

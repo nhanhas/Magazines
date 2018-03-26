@@ -557,3 +557,117 @@ The customer Doree It Consulting Services(n.31) already issued for this month.<b
 
 ----------------------2018-03-24 16:21:26----------------------
 The customer GALP - Lisboa(n.3137680) already issued for this month.<br><br>
+
+----------------------2018-03-26 22:22:21----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-26 22:22:22----------------------
+The customer GALP - Oeiras(n.3137680) already issued for this month.<br><br>
+
+----------------------2018-03-26 22:24:41----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-26 22:24:41----------------------
+No client subscribed magazine with Base ref: VOGUE0<br>
+
+----------------------2018-03-26 22:26:10----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-26 22:26:11----------------------
+No client subscribed magazine with Base ref: VOGUE0<br>
+
+----------------------2018-03-26 22:26:11----------------------
+The customer Doree It Consulting Services(n.31) already issued for this month.<br><br>
+
+----------------------2018-03-26 22:26:11----------------------
+The customer GALP - Oeiras(n.3137680) already issued for this month.<br><br>
+
+----------------------2018-03-26 22:26:11----------------------
+The customer GALP - Lisboa(n.3137680) already issued for this month.<br><br>
+
+----------------------2018-03-26 22:27:28----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-26 22:27:28----------------------
+No client subscribed magazine with Base ref: VOGUE0<br>
+
+----------------------2018-03-26 22:27:29----------------------
+The customer Doree It Consulting Services(n.31) already issued for this month.<br><br>
+
+----------------------2018-03-26 22:27:29----------------------
+The customer GALP - Oeiras(n.3137680) already issued for this month.<br><br>
+
+----------------------2018-03-26 22:27:29----------------------
+The customer GALP - Lisboa(n.3137680) already issued for this month.<br><br>
+
+----------------------2018-03-26 22:27:59----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-26 22:28:00----------------------
+No client subscribed magazine with Base ref: VOGUE0<br>
+
+----------------------2018-03-26 22:28:00----------------------
+The customer Doree It Consulting Services(n.31) already issued for this month.<br><br>
+
+----------------------2018-03-26 22:28:00----------------------
+The customer GALP - Oeiras(n.3137680) already issued for this month.<br><br>
+
+----------------------2018-03-26 22:28:00----------------------
+The customer GALP - Lisboa(n.3137680) already issued for this month.<br><br>
+
+----------------------2018-03-26 22:30:14----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-26 22:30:14----------------------
+No client subscribed magazine with Base ref: VOGUE0<br>
+
+----------------------2018-03-26 22:30:15----------------------
+The customer Doree It Consulting Services(n.31) already issued for this month.<br><br>
+
+----------------------2018-03-26 22:30:15----------------------
+The customer GALP - Oeiras(n.3137680) already issued for this month.<br><br>
+
+----------------------2018-03-26 22:30:15----------------------
+The customer GALP - Lisboa(n.3137680) already issued for this month.<br><br>
+
+----------------------2018-03-26 22:32:13----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-26 22:32:13----------------------
+No client subscribed magazine with Base ref: VOGUE0<br>
+
+----------------------2018-03-26 22:32:16----------------------
+A Data e Hora de início de transporte não pode ser anterior à data e hora atual.
+
+----------------------2018-03-26 22:32:16----------------------
+#ERROR# Sign Consign WayBill - customer Doree It Consulting Services(n.31)<br><br>
+
+----------------------2018-03-26 22:32:19----------------------
+A Data e Hora de início de transporte não pode ser anterior à data e hora atual.
+
+----------------------2018-03-26 22:32:19----------------------
+#ERROR# Sign Consign WayBill - customer GALP - Oeiras(n.3137680)<br><br>
+
+----------------------2018-03-26 22:32:21----------------------
+A Data e Hora de início de transporte não pode ser anterior à data e hora atual.
+
+----------------------2018-03-26 22:32:21----------------------
+#ERROR# Sign Consign WayBill - customer GALP - Lisboa(n.3137680)<br><br>
+
+----------------------2018-03-26 22:35:33----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-26 22:35:34----------------------
+The customer GALP - Oeiras(n.3137680) already issued for this month.<br><br>
+
+----------------------2018-03-26 22:36:31----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-26 22:36:32----------------------
+The customer GALP - Oeiras(n.3137680) already issued for this month.<br><br>
+
+----------------------2018-03-26 22:39:22----------------------
+Starting with waybill...<br>
+
+----------------------2018-03-26 22:39:23----------------------
+The customer GALP - Oeiras(n.3137680) already issued for this month.<br><br>

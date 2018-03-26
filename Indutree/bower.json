@@ -1,0 +1,17 @@
+{
+  "name": "app",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "angular": "1.x",
+    "angular-route": "1.x",
+    "font-awesome": "4.7.0",
+    "bootstrap": "3.x",
+    "plyr" : "*",
+    "angular-ui" : "*",
+    "angular-bootstrap" : "*",
+    "requirejs" : "*",
+    "angular-translate" : "*",
+    "color-thief" : "*"
+  }
+}

@@ -1,0 +1,15 @@
+<div class="store-checkbox">
+
+    <div ng-if="url === ''" ng-click="onChange()">
+        <span ng-show="model"> <i class="fa fa-check-square-o fa-lg"></i> </span>
+        <span ng-show="!model"> <i class="fa fa-square-o fa-lg"></i> </span>
+        <span>{{label}}</span>
+    </div>
+
+    <div ng-if="url !== ''">
+        <span ng-show="model" ng-click="onChange()"> <i class="fa fa-check-square-o fa-lg"></i> </span>
+        <span ng-show="!model" ng-click="onChange()"> <i class="fa fa-square-o fa-lg"></i> </span>
+        <a href="{{url}}" target="_blank">{{label}}</a>
+    </div>    
+        
+</div>

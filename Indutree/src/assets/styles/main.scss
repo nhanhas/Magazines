@@ -1,0 +1,9 @@
+.main{
+  position: relative;
+  background-color: black;
+
+  > div {
+    border: 5px solid red;
+  }
+
+}

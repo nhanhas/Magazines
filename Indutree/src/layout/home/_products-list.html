@@ -1,0 +1,6 @@
+
+<div ng-repeat="category in productsCatalog">
+    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 product-tile"   ng-repeat="product in category.productsList | filter : searchExpression"  ng-if="expandedCategory === product.categoryId || expandedCategory === 'ALL'">
+        <store-product product="product" on-expand="showDetailProduct(product)"></store-product>
+    </div>
+</div> 

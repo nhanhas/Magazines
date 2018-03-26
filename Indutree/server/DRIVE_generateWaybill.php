@@ -15,7 +15,7 @@ $inputJSON = file_get_contents('php://input');
 $DRIVE_credentials  = json_decode($inputJSON)->credentials;
 $DRIVE_references   = json_decode($inputJSON)->products;
 $DRIVE_waybillConfig   = json_decode($inputJSON)->waybillConfig;
-print_r($DRIVE_references); //Debug References
+//print_r($DRIVE_references); //Debug References
 
 /*****************************************************************/
 $ch = curl_init();
@@ -74,7 +74,7 @@ foreach ($DRIVE_references as $reference) {
             logData($msg);
             continue;
         }
-
+ 
         //#5.1 - Mark this customer as Already Waybilled
         $WAYBILL_customersAlreadyIssued[] = $customer['clstamp'];
 
@@ -153,11 +153,15 @@ foreach ($DRIVE_references as $reference) {
 
 
 
-        echo "<br><br>";        
+        $msg = '{"code": 0, "message":"", "data": ""}';
+        echo $msg;
+        exit(1);   
         //exit(1);//try only 1 iteration
     }
 
-
+    $msg = '{"code": 0, "message":"", "data": ""}';
+        echo $msg;
+        exit(1);  
 }
 
 
@@ -294,8 +298,8 @@ function DRIVE_userLogin(){
     } else if(empty($response)){
         return false;
     } else if(isset($response['messages'][0]['messageCodeLocale'])){
-        echo $response['messages'][0]['messageCodeLocale']."<br>";
-        echo "Error in login. Please verify your username, password, applicationType and company." ;
+        //echo $response['messages'][0]['messageCodeLocale']."<br>";
+        //echo "Error in login. Please verify your username, password, applicationType and company." ;
         return false;
     }
     return true;
@@ -510,7 +514,7 @@ function DRIVE_signDocument($itemVO){
 //#A - Log and Echo messages from script
 function logData($data){
     
-    echo($data);
+    //echo($data);
 
 	$file = 'log.txt';
 	// Open the file to get existing content

@@ -1,0 +1,41 @@
+<div class="publicModal">
+    <div class="modal-header" id="modal-header">
+        <h1>{{ title | translate}}</h1>
+    </div>
+
+    <div class="modal-body text-center" id="modal-body">
+       
+        <div class="info-label">
+           
+            <div style="margin-top: 10px;font-size: 23px;">{{'ADDON.DETAILS.PUBLIC.POPUP.INFO.LABEL' | translate}}</div>
+        </div>
+
+    </div>
+
+
+    <div class="modal-footer">
+        <div class="col-xs-12 col-md-6 text-left">
+            <store-button   label="{{'ADDON.DETAILS.POPUP.NO.BTN.LABEL' | translate}}"  
+                    icon = ""
+                    action = "confirm"
+                    on-enter="onClickNotClient()" ></store-button>                             
+        </div>
+
+         <!-- if is product or addon to purchase -->
+        <div ng-if="!toRemove">
+            <div class="col-xs-12 col-md-6 text-left" ng-show="!loading">
+                <store-button   label="{{'ADDON.DETAILS.POPUP.YES.BTN.LABEL' | translate}}"  
+                        icon = ""
+                        action = "confirm" 
+                        on-enter="onClickClient()"></store-button>                            
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+
+
+
+
