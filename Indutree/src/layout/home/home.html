@@ -3,7 +3,7 @@
     <!-- List Products FOR Guias -->
     <div id="products" ng-if="menuSelected === 1">
             
-        <h1><span class="fa fa-book"></span> Lista de Produtos</h1>
+        <h1><span class="fa fa-book"></span> Emitir de Guias</h1>
         
         <hr>
 
@@ -50,7 +50,7 @@
                         <div class="col-xs-4 text-right">
                             
                             <button class="btn btn-success" style="padding: 3px 30px;" ng-click="requestWaybill()"><i class="fa" ng-class="loading ? 'fa-spinner fa-spin' : 'fa-book'"></i> &nbsp;Gerar guias</button>
-                            <span style="color:green" ng-if="waybilled">Geração concluida</span>
+                            <br><span style="color:green" ng-if="waybilled">Geração concluida</span>
                         </div> 
                     </div>
                 </div>    

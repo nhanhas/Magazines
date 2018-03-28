@@ -107,6 +107,7 @@ app
 
         $scope.requestWaybill = function(){
             let productsToWayBill = [];
+            let clientsToWayBill = []; // if is empty, allow ALL, otherwise none
             $scope.loading = true;
             $scope.waybilled = false; //for green message
 
@@ -121,10 +122,16 @@ app
                 }
             });
 
+            //#2 - iterate clients
+            $scope.clientList.forEach(function(client) {
+                if(client.selected)
+                    clientsToWayBill.push({no : client.no, estab : client.estab});
+            });
+
             if(productsToWayBill.length > 0){
                 
                 //call Service
-                StoreService.generateWaybillService($scope.credentials, productsToWayBill, $scope.loadDate, $scope.loadHour).then(function(result){
+                StoreService.generateWaybillService($scope.credentials, productsToWayBill, clientsToWayBill, $scope.loadDate, $scope.loadHour).then(function(result){
                     $scope.loading = false;
                     $scope.waybilled = true;
                     if(result.code === 0){

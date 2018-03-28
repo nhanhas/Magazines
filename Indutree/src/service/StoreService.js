@@ -51,11 +51,12 @@ app.service('StoreService', ['$http', 'FrameworkUtils', function($http, Framewor
         });
     }
 
-    this.generateWaybillService  = function(credentials, products, loadDate, loadHour){
+    this.generateWaybillService  = function(credentials, products, clients, loadDate, loadHour){
        
         let serviceURL = this.baseURL + '/DRIVE_generateWaybill.php';
         let parameter = {   credentials : credentials, 
-                            products : products, 
+                            products : products,
+                            clients : clients, 
                             waybillConfig : {
                                 loadDate : loadDate,
                                 loadHour : loadHour

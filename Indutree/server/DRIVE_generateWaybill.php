@@ -15,7 +15,9 @@ $inputJSON = file_get_contents('php://input');
 $DRIVE_credentials  = json_decode($inputJSON)->credentials;
 $DRIVE_references   = json_decode($inputJSON)->products;
 $DRIVE_waybillConfig   = json_decode($inputJSON)->waybillConfig;
-//print_r($DRIVE_references); //Debug References
+$DRIVE_clients   = json_decode($inputJSON)->clients;
+//print_r($DRIVE_clients); //Debug References
+//exit(1);
 
 /*****************************************************************/
 $ch = curl_init();
