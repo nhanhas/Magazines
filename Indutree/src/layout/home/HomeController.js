@@ -7,14 +7,24 @@ app
          */
         $scope.menuSelected = undefined;
         $scope.productList = undefined;
+        $scope.clientList = undefined;
+        $scope.searchClient = '';
+                
         //TODO - change this
-        $scope.credentials = {
+        /*$scope.credentials = {
             userCode : 'jb',
             password : '1', 
             company : '',
             applicationType : 'HYU45F-FKEIDD-K93DUJ-ALRNJE'
+        }*/
+
+        $rootScope.credentials = $scope.credentials;
+        if(!$rootScope.credentials){
+            //navigate
+            $location.path('/login');
         }
-        $scope.loadDate = '2018-03-24';
+
+        $scope.loadDate = '2018-03-27';
         $scope.loadHour = '19:55';
         $scope.loading = false;
 
@@ -39,20 +49,21 @@ app
        /**
         * Controller Functions 
         */
-       $scope.menuSelection = function(option){
-           $scope.menuSelected = option;
+        $scope.menuSelection = function(option){
+            $scope.menuSelected = option;
 
-           switch (option) {
-               case 1:
+            switch (option) {
+                case 1:
                     $scope.getProducts();
+                    $scope.getClients(); 
                     break;
                 case 2:
                     
                     break;
-              
-           }
+                
+            }
 
-       }
+        }
     
         //Get Products from Drive FX
         $scope.getProducts = function(){
@@ -62,6 +73,17 @@ app
                     $scope.productList = result.data;
                 }else{
                     
+                }
+            });
+        }
+        //Get Clients from Drive FX
+        $scope.getClients = function(){
+            StoreService.getClientsService($scope.credentials).then(function(result){
+                if(result.code === 0){
+                    console.log(result.data);
+                    $scope.clientList = result.data;
+                    
+                }else{
                 }
             });
         }

@@ -1,5 +1,5 @@
 app
-    .controller('LoginController', ['$scope', '$location','FrameworkUtils', 'StoreService', function($scope, $location, FrameworkUtils, StoreService) {
+    .controller('LoginController', ['$rootScope', '$scope', '$location','FrameworkUtils', 'StoreService', function($rootScope, $scope, $location, FrameworkUtils, StoreService) {
 
         $scope.error = undefined;
 
@@ -15,6 +15,9 @@ app
             StoreService.userLogin($scope.credentials).then(function(result){
                 if(result.code === 0){
                     $scope.error = undefined;
+                    
+                    //Set at rootscope
+                    $rootScope.credentials = $scope.credentials;
                     //navigate
                     $location.path('/home');
                 }else{

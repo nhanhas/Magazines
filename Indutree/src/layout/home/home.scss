@@ -2,13 +2,34 @@ body{
     background-color: rgba(0,0,0,0.7);
     color : white;
 }
-.container{
+.container-custom{
     margin-left: 170px;
+    margin-right: 20px;
 }
 .home{
     
     //product list option
     #products{
+        .grid-rows{
+            height: 600px;
+            overflow: auto;
+        }
+
+        .grid-buttons{
+            margin-top: 20px;
+            input{ 
+                color:black;
+            }
+        }
+
+        .st-list{
+            border-right: 1px solid white;
+        }
+
+        .prod-list{
+            border-left: 1px solid white;
+        }
+
         .product-base{
             cursor: pointer;
             padding: 5px 0;

@@ -30,6 +30,17 @@ app.service('StoreService', ['$http', 'FrameworkUtils', function($http, Framewor
         });
     }
 
+    //POST get Client
+    this.getClientsService  = function(credentials){
+       
+        let serviceURL = this.baseURL + '/DRIVE_getClients.php';
+        let parameter = { credentials : credentials };
+
+        return FrameworkUtils.Http_POST(serviceURL, parameter).then(function(result){     
+           return result.data;
+        });
+    }
+
     this.getProductsByBaseService  = function(credentials, baseRef){
        
         let serviceURL = this.baseURL + '/DRIVE_getProductsByBase.php';
