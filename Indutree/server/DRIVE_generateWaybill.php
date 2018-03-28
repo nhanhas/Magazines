@@ -80,7 +80,7 @@ foreach ($DRIVE_references as $reference) {
         $wasIssuedThisMonth = UTILS_isSameMonth($customer['u6525_indutree_cl']['lastexpedition']);
         
         //#5 - Only waybill customer if last waybill was in last month
-        if(!$wasIssuedThisMonth){
+        if($wasIssuedThisMonth){
             $msg = "The customer ".$customer['nome']."(n.".$customer['no'].") already issued for this month.<br><br>";
             logData($msg);
             continue;
