@@ -32,6 +32,7 @@ if($loginResult == false){
 	exit(1);
 }
 
+
 //#3 - Create an result Array of creation/errors
 $WAYBILL_result = array(); 
 $WAYBILL_customersAlreadyIssued = array(); 
@@ -40,7 +41,7 @@ $WAYBILL_customersAlreadyIssued = array();
 foreach ($DRIVE_references as $reference) {
     //The following is for use in BIZ_createDocument
     $referenceFromMonth = $reference;
-
+    
     //#1 - process reference (extract last 5 chars)
     $reference = UTILS_getBaseReference($reference);
     
@@ -59,7 +60,15 @@ foreach ($DRIVE_references as $reference) {
     //print_r(json_encode($customersToWaybill) . "<br><br>");
 
     //#4 - iterate for each subscriber
-    foreach($customersToWaybill as $customer){
+    foreach($customersToWaybill as $customer){        
+        //#4.0 - Check if $DRIVE_clients is empty : 'empty' - do for all without skipping, 'not empty' - do for selected 
+        $existInRequest = UTILS_isClientInRequest($DRIVE_clients, $customer);
+        if($existInRequest == false){            
+            //logData($customer['no']." estab: ".$customer['estab']. " not in request <br>");
+            continue;
+        }
+            
+
         //#4.1 - Check if this customer (clstamp) was been already issued in this script
         if (in_array($customer['clstamp'], $WAYBILL_customersAlreadyIssued)){
             //means that we already waybilled this customer in another ref iteration in this script
@@ -71,7 +80,7 @@ foreach ($DRIVE_references as $reference) {
         $wasIssuedThisMonth = UTILS_isSameMonth($customer['u6525_indutree_cl']['lastexpedition']);
         
         //#5 - Only waybill customer if last waybill was in last month
-        if($wasIssuedThisMonth){
+        if(!$wasIssuedThisMonth){
             $msg = "The customer ".$customer['nome']."(n.".$customer['no'].") already issued for this month.<br><br>";
             logData($msg);
             continue;
@@ -161,11 +170,11 @@ foreach ($DRIVE_references as $reference) {
         //exit(1);//try only 1 iteration
     }
 
-    $msg = '{"code": 0, "message":"", "data": ""}';
-        echo $msg;
-        exit(1);  
-}
 
+}
+$msg = '{"code": 0, "message":"", "data": ""}';
+echo $msg;
+exit(1);  
 
 /**
  * BIZ of Creating Docs
@@ -594,6 +603,24 @@ function UTILS_getPresentDate(){
     $date =  date("Y-m-d H:i:s",mktime(0,0,0,$presentMonth,$presentDay,$presentYear));
 
     return $date;
+}
+
+//#G - is Client in JSON request
+function UTILS_isClientInRequest($requestList, $customer){
+    $exist = false;
+    if(isset($requestList)){
+        foreach($requestList as $client){
+            if($client->no == $customer['no'] && $client->estab == $customer['estab']){
+                $exist = true;
+                break;
+            }
+        }
+    }else{
+        //otherwise , dont filter
+        $exist = true;
+    }
+
+    return $exist;
 }
 
 ?>
