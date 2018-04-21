@@ -4,7 +4,7 @@
 define("backendUrl"     , "https://sis04.drivefx.net/45B784DD/PHCWS/REST"); //TODO CHANGE WITH CLIENT
 
 //#0 - Define some Constants
-define("consignNdoc"    , 9);
-define("refundNdoc"     , 10);
+define("consignNdoc"    , 16);
+define("refundNdoc"     , 18);
 
  ?>

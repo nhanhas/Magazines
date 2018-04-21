@@ -110,6 +110,11 @@ foreach ($DRIVE_references as $reference) {
         //#8 - Update Consign to make reference of Refund
         $newConsignWaybill['u6525_indutree_ft']['refund_ftstamp'] = $newRefundWaybill['ftstamp'];
         $newConsignWaybill['u6525_indutree_ft']['refund_uniqueid'] = $newRefundWaybill['logInfo'];
+
+        //#9 - Update Refund to make reference of Consign
+        $newRefundWaybill['u6525_indutree_ft']['consign_ftsamp'] = $newConsignWaybill['ftstamp'];
+        $newRefundWaybill['u6525_indutree_ft']['consign_uniqueid'] = $newConsignWaybill['logInfo'];
+
         $newConsignWaybill = DRIVE_saveInstance("Ft", $newConsignWaybill);
         if($newConsignWaybill == null){
             $msg = "#ERROR# Updating Consign WayBill - customer ".$customer['nome']."(n.".$customer['no'].")<br><br>";
@@ -117,24 +122,6 @@ foreach ($DRIVE_references as $reference) {
             continue;
         }
 
-        //#9 - Sign consign
-		$newConsignWaybill_ftstamp = $newConsignWaybill['ftstamp'];
-		$newConsignWaybill_logInfo = $newConsignWaybill['logInfo'];
-        $newConsignWaybill = DRIVE_signDocument($newConsignWaybill);
-		if($newConsignWaybill == null){
-			$msg = "#ERROR# Sign Consign WayBill - customer ".$customer['nome']."(n.".$customer['no']."), We will create Refund anyway.<br><br>";
-			logData($msg);
-			//continue; We should continue in order to create refund
-        }else{
-			//#10 - Log the success of consign waybill
-			$msg = "#SUCCESS# Consign WayBill created with No.".$newConsignWaybill['fno']." - Customer ".$customer['nome']."(n.".$customer['no'].")<br>";
-			logData($msg);
-		}
-
-
-        //#11 - Update Refund to make reference of Refund
-        $newRefundWaybill['u6525_indutree_ft']['refund_ftstamp'] = $newConsignWaybill_ftstamp;
-        $newRefundWaybill['u6525_indutree_ft']['refund_uniqueid'] = $newConsignWaybill_logInfo;
         $newRefundWaybill = DRIVE_saveInstance("Ft", $newRefundWaybill);
         if($newRefundWaybill == null){
             $msg = "#ERROR# Creating Refund WayBill - customer ".$customer['nome']."(n.".$customer['no'].")<br><br>";
@@ -146,6 +133,19 @@ foreach ($DRIVE_references as $reference) {
         $msg = "#SUCCESS# Refund WayBill created with No.".$newRefundWaybill['fno']." - Customer ".$customer['nome']."(n.".$customer['no'].")<br>";
         logData($msg);
 
+        //#10 - Sign consign		
+        $newConsignWaybill = DRIVE_signDocument($newConsignWaybill);
+        if($newConsignWaybill == null){
+            $msg = "#ERROR# Sign Consign WayBill - customer ".$customer['nome']."(n.".$customer['no']."), We will create Refund anyway.<br><br>";
+            logData($msg);
+            //continue; We should continue in order to create refund
+        }else{
+            //#10 - Log the success of consign waybill
+            $msg = "#SUCCESS# Consign WayBill created with No.".$newConsignWaybill['fno']." - Customer ".$customer['nome']."(n.".$customer['no'].")<br>";
+            logData($msg);
+        }
+
+      
         //#13 - Update Cl for lastExpedition date
         $customer['u6525_indutree_cl']['lastexpedition'] = UTILS_getPresentDate();
         $customer = DRIVE_saveInstance("Cl", $customer);
