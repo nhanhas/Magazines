@@ -1,5 +1,5 @@
 app
-    .controller('HomeController', ['$rootScope', '$scope', '$controller', '$timeout', '$location', '$http','$q', 'FrameworkUtils', 'StoreService',   function($rootScope, $scope, $controller,$timeout, $location, $http, $q, FrameworkUtils, StoreService) {
+    .controller('HomeController', ['$rootScope', '$scope', '$controller', '$timeout', '$location', '$http','$q', '$filter', 'FrameworkUtils', 'StoreService',   function($rootScope, $scope, $controller,$timeout, $location, $http, $q, $filter, FrameworkUtils, StoreService) {
 
          
         /**
@@ -8,7 +8,14 @@ app
         $scope.menuSelected = undefined;
         $scope.productList = undefined;
         $scope.clientList = undefined;
-        $scope.searchClient = '';
+        $scope.filters = {
+            searchClient : ''
+        };
+        $scope.loading = false;
+        $scope.waybillDateHour = {
+            loadDate : '',
+            loadHour : ''
+        }
                 
         //TODO - change this
         /*$scope.credentials = {
@@ -24,9 +31,7 @@ app
             $location.path('/login');
         }
 
-        $scope.loadDate = '2018-03-27';
-        $scope.loadHour = '19:55';
-        $scope.loading = false;
+        
 
         /**
          * Initialize main function
@@ -49,13 +54,20 @@ app
        /**
         * Controller Functions 
         */
+        $scope.selectAll = function(){
+            let filteredClients = $filter('filter')($scope.clientList, $scope.filters.searchClient);
+            filteredClients.forEach(function(client) {
+                client.selected = true;
+            });
+
+        }
+
         $scope.menuSelection = function(option){
             $scope.menuSelected = option;
 
             switch (option) {
                 case 1:
-                    $scope.getProducts();
-                    $scope.getClients(); 
+                    $scope.getProducts();                    
                     break;
                 case 2:
                     
@@ -71,6 +83,7 @@ app
                 if(result.code === 0){
                     console.log(result.data);
                     $scope.productList = result.data;
+                    $scope.getClients(); 
                 }else{
                     
                 }
@@ -110,7 +123,7 @@ app
             let clientsToWayBill = []; // if is empty, allow ALL, otherwise none
             $scope.loading = true;
             $scope.waybilled = false; //for green message
-
+           
             //#1 - iterate base products
             $scope.productList.forEach(function(baseProduct) {
                 if(baseProduct.generated && baseProduct.generated.length > 0){
@@ -129,9 +142,9 @@ app
             });
 
             if(productsToWayBill.length > 0){
-                
+
                 //call Service
-                StoreService.generateWaybillService($scope.credentials, productsToWayBill, clientsToWayBill, $scope.loadDate, $scope.loadHour).then(function(result){
+                StoreService.generateWaybillService($scope.credentials, productsToWayBill, clientsToWayBill, $scope.waybillDateHour.loadDate, $scope.waybillDateHour.loadHour).then(function(result){
                     $scope.loading = false;
                     $scope.waybilled = true;
                     if(result.code === 0){

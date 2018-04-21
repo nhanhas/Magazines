@@ -1,14 +1,14 @@
 <?php
+
+
+include("DRIVE_config.php");
 /*****************************************************************
  * This Script is responsible to accept an array of references,
  * and then generate Invoices (Guia Consignacao and Guia Devolucao)
- * in order to distribute products 
+ * in order to distribute products
  *****************************************************************/
 
-//#0 - Define some Constants
-define("consignNdoc"    , 16);
-define("refundNdoc"     , 18);
-define("backendUrl"     , "https://sis04.drivefx.net/45B784DD/PHCWS/REST"); //TODO CHANGE WITH CLIENT
+
 
 //#1 - Accept POST references
 $inputJSON = file_get_contents('php://input');
@@ -16,6 +16,7 @@ $DRIVE_credentials  = json_decode($inputJSON)->credentials;
 $DRIVE_references   = json_decode($inputJSON)->products;
 $DRIVE_waybillConfig   = json_decode($inputJSON)->waybillConfig;
 $DRIVE_clients   = json_decode($inputJSON)->clients;
+logData($inputJSON);
 //print_r($DRIVE_clients); //Debug References
 //exit(1);
 
@@ -34,17 +35,17 @@ if($loginResult == false){
 
 
 //#3 - Create an result Array of creation/errors
-$WAYBILL_result = array(); 
-$WAYBILL_customersAlreadyIssued = array(); 
+$WAYBILL_result = array();
+$WAYBILL_customersAlreadyIssued = array();
 
 //#4 - Start with waybill MAIN iteration
 foreach ($DRIVE_references as $reference) {
     //The following is for use in BIZ_createDocument
     $referenceFromMonth = $reference;
-    
+
     //#1 - process reference (extract last 5 chars)
     $reference = UTILS_getBaseReference($reference);
-    
+
     //#2 - Get All Clients that subscribed that magazine (base reference)
     $customersStampsToWaybill = DRIVE_getCustomersByRefSubscription($reference);
     if($customersStampsToWaybill == null){
@@ -52,22 +53,22 @@ foreach ($DRIVE_references as $reference) {
         logData($msg);
         continue;
     }
-    
+
     //#3 - Get Full Client Record (for update dates later and NO/ESTAB bills)
     $customersToWaybill = UTILS_prepareCustomersByStamps($customersStampsToWaybill);
-    
+
     //Debug - How many Customers to waybill
     //print_r(json_encode($customersToWaybill) . "<br><br>");
 
     //#4 - iterate for each subscriber
-    foreach($customersToWaybill as $customer){        
-        //#4.0 - Check if $DRIVE_clients is empty : 'empty' - do for all without skipping, 'not empty' - do for selected 
+    foreach($customersToWaybill as $customer){
+        //#4.0 - Check if $DRIVE_clients is empty : 'empty' - do for all without skipping, 'not empty' - do for selected
         $existInRequest = UTILS_isClientInRequest($DRIVE_clients, $customer);
-        if($existInRequest == false){            
+        if($existInRequest == false){
             //logData($customer['no']." estab: ".$customer['estab']. " not in request <br>");
             continue;
         }
-            
+
 
         //#4.1 - Check if this customer (clstamp) was been already issued in this script
         if (in_array($customer['clstamp'], $WAYBILL_customersAlreadyIssued)){
@@ -78,14 +79,14 @@ foreach ($DRIVE_references as $reference) {
         }
 
         $wasIssuedThisMonth = UTILS_isSameMonth($customer['u6525_indutree_cl']['lastexpedition']);
-        
+
         //#5 - Only waybill customer if last waybill was in last month
         if($wasIssuedThisMonth){
             $msg = "The customer ".$customer['nome']."(n.".$customer['no'].") already issued for this month.<br><br>";
             logData($msg);
             continue;
         }
- 
+
         //#5.1 - Mark this customer as Already Waybilled
         $WAYBILL_customersAlreadyIssued[] = $customer['clstamp'];
 
@@ -96,7 +97,7 @@ foreach ($DRIVE_references as $reference) {
             logData($msg);
             continue;
         }
-       
+
         //#7 - Start creating Refund Doc
         $newRefundWaybill = BIZ_createDocument(refundNdoc, $customer, $DRIVE_references, 1);
         if($newRefundWaybill == null){
@@ -105,7 +106,7 @@ foreach ($DRIVE_references as $reference) {
             continue;
         }
 
-        
+
         //#8 - Update Consign to make reference of Refund
         $newConsignWaybill['u6525_indutree_ft']['refund_ftstamp'] = $newRefundWaybill['ftstamp'];
         $newConsignWaybill['u6525_indutree_ft']['refund_uniqueid'] = $newRefundWaybill['logInfo'];
@@ -115,31 +116,32 @@ foreach ($DRIVE_references as $reference) {
             logData($msg);
             continue;
         }
-           
-        //#9 - Sign consign 
+
+        //#9 - Sign consign
+		$newConsignWaybill_ftstamp = $newConsignWaybill['ftstamp'];
+		$newConsignWaybill_logInfo = $newConsignWaybill['logInfo'];
         $newConsignWaybill = DRIVE_signDocument($newConsignWaybill);
 		if($newConsignWaybill == null){
-			$msg = "#ERROR# Sign Consign WayBill - customer ".$customer['nome']."(n.".$customer['no'].")<br><br>";
+			$msg = "#ERROR# Sign Consign WayBill - customer ".$customer['nome']."(n.".$customer['no']."), We will create Refund anyway.<br><br>";
 			logData($msg);
-			continue;
-        }
-                
-        //#10 - Log the success of consign waybill
-        $msg = "#SUCCESS# Consign WayBill created with No.".$newConsignWaybill['fno']." - Customer ".$customer['nome']."(n.".$customer['no'].")<br>";
-        logData($msg);
-        
+			//continue; We should continue in order to create refund
+        }else{
+			//#10 - Log the success of consign waybill
+			$msg = "#SUCCESS# Consign WayBill created with No.".$newConsignWaybill['fno']." - Customer ".$customer['nome']."(n.".$customer['no'].")<br>";
+			logData($msg);
+		}
 
-        
+
         //#11 - Update Refund to make reference of Refund
-        $newRefundWaybill['u6525_indutree_ft']['refund_ftstamp'] = $newConsignWaybill['ftstamp'];
-        $newRefundWaybill['u6525_indutree_ft']['refund_uniqueid'] = $newConsignWaybill['logInfo'];
+        $newRefundWaybill['u6525_indutree_ft']['refund_ftstamp'] = $newConsignWaybill_ftstamp;
+        $newRefundWaybill['u6525_indutree_ft']['refund_uniqueid'] = $newConsignWaybill_logInfo;
         $newRefundWaybill = DRIVE_saveInstance("Ft", $newRefundWaybill);
         if($newRefundWaybill == null){
             $msg = "#ERROR# Creating Refund WayBill - customer ".$customer['nome']."(n.".$customer['no'].")<br><br>";
             logData($msg);
             continue;
         }
-        
+
         //#12 - Log the success of Refund waybill
         $msg = "#SUCCESS# Refund WayBill created with No.".$newRefundWaybill['fno']." - Customer ".$customer['nome']."(n.".$customer['no'].")<br>";
         logData($msg);
@@ -153,28 +155,19 @@ foreach ($DRIVE_references as $reference) {
             continue;
         }
 
-        
-        
 
-        
+
         //print_r("<br><br>Clients issued<br><br>");
         //print_r($WAYBILL_customersAlreadyIssued);
 
 
-
-
-
-        $msg = '{"code": 0, "message":"", "data": ""}';
-        echo $msg;
-        exit(1);   
-        //exit(1);//try only 1 iteration
     }
 
 
 }
 $msg = '{"code": 0, "message":"", "data": ""}';
 echo $msg;
-exit(1);  
+exit(1);
 
 /**
  * BIZ of Creating Docs
@@ -185,11 +178,11 @@ function BIZ_createDocument($ndoc, $customer, $allRequestedReferences, $invoiceT
     //#1 - Get an order new instance
 	$newInstanceFt = DRIVE_getNewInstance("Ft", $ndoc);
 	if($newInstanceFt == null){
-		$msg = "Error on getting new instance Ft. <br>";		
+		$msg = "Error on getting new instance Ft. <br>";
 		logData($msg);
 		return null;
 	}
-	
+
 	//#2 - Add customer no to order
     $newInstanceFt['no'] = $customer['no'];
     $newInstanceFt['estab'] = $customer['estab'];
@@ -201,7 +194,7 @@ function BIZ_createDocument($ndoc, $customer, $allRequestedReferences, $invoiceT
 		logData($msg);
 		return null;
     }
-    
+
     //#3 - Now add references - NOTE: $reference in foreach is not a base product
     foreach($allRequestedReferences as $reference){
         //#3.1 - try to get reference subscribed for this client
@@ -226,15 +219,15 @@ function BIZ_createDocument($ndoc, $customer, $allRequestedReferences, $invoiceT
                 break;
             case 2:
                 //TODO - Make diference between consign and refund
-                break;        
+                break;
         }
 
         //3.4 - Add it!
         $newInstanceFt['fis'][] = $productRow;
 
     }
-     
-    
+
+
     //#3.5 - Then sync
     $newInstanceFt = DRIVE_actEntiy("Ft", $newInstanceFt);
 	if($newInstanceFt == null){
@@ -247,7 +240,7 @@ function BIZ_createDocument($ndoc, $customer, $allRequestedReferences, $invoiceT
     if($invoiceType == 1){
         for ($i = 0; $i < sizeof($newInstanceFt['fis']); $i++) {
             $newInstanceFt['fis'][$i]['qtt'] = 0;
-        }         
+        }
         $newInstanceFt = DRIVE_actEntiy("Ft", $newInstanceFt);
     }
 
@@ -261,15 +254,15 @@ function BIZ_createDocument($ndoc, $customer, $allRequestedReferences, $invoiceT
     //#4 - Save Invoice
 	$newInstanceFt = DRIVE_saveInstance("Ft", $newInstanceFt);
 	if($newInstanceFt == null){
-		$msg = "Error on save entity for Invoice. <br><br>";		
+		$msg = "Error on save entity for Invoice. <br><br>";
 		logData($msg);
 		return null;
 	}
-    
+
     //#5 - return it
     return $newInstanceFt;
-    
-} 
+
+}
 
 /**
  * DRIVE Section
@@ -436,7 +429,7 @@ function DRIVE_getCustomersByRefSubscription($baseRef){
         "groupByItems": []
       }');
 
-    
+
 
 	$response=DRIVE_Request($ch, $url, $params);
 
@@ -480,7 +473,7 @@ function DRIVE_getCustomersByStamp($clstamp){
         "groupByItems": []
       }');
 
-    
+
 
 	$response=DRIVE_Request($ch, $url, $params);
 
@@ -524,7 +517,7 @@ function DRIVE_signDocument($itemVO){
  */
 //#A - Log and Echo messages from script
 function logData($data){
-    
+
     //echo($data);
 
 	$file = 'log.txt';
@@ -564,7 +557,7 @@ function UTILS_isSameMonth($dateString){
 
     //#2 - Format date
     $formattedDate = date_format($date,"Y-m-d" );
-   
+
     //means that is empty, so...is not same month
     if($formattedDate == date('1900-01-01')){
         return false;
@@ -594,7 +587,7 @@ function UTILS_getSubscribedStByRef($customer, $reference){
     return $subscriptionArticle;
 }
 
-//#F - Get TODAY date 
+//#F - Get TODAY date
 function UTILS_getPresentDate(){
     $presentDay = date("d");
     $presentMonth = date("m");
