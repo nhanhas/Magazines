@@ -3,7 +3,7 @@
     <!-- List Products FOR Guias -->
     <div id="products" ng-if="menuSelected === 1">
             
-        <h1><span class="fa fa-book"></span> Emitir de Guias</h1>
+        <h1><span class="fa fa-book"></span> Emitir Guias</h1>
         
         <hr>
 
@@ -96,13 +96,51 @@
 
 
     <!-- List Clients -->
-    <div ng-if="menuSelected === 2">
+    <div id="headquarters" ng-if="menuSelected === 2">
 
-            <h1><span class="fa fa-users"></span> Lista de Clientes</h1>
+            <h1><span class="fa fa-users"></span> Emitir Faturas</h1>
         
             <hr>
 
-            Em desenvolvimento
+            <!-- Clients -->
+            <div class="col-xs-12 cl-list">
+                <!-- Base -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="col-xs-2">
+                            <button class="btn btn-info" style="padding: 0 20px;font-size: 11px;" ng-click="selectAllHeadquarters()">Todos</button>
+                        </div> 
+                        <div class="col-xs-2">No.</div> 
+                        <div class="col-xs-6">Nome</div> 
+                        <div class="col-xs-2">Estab</div> 
+                    </div>
+                </div>
+                <hr>
+                <!-- Rows -->
+                <div class="row grid-rows">
+                    <div class="col-xs-12 product-base" ng-repeat="headquarter in headquartersList | filter:filters.searchHeadquarter">
+                        <div class="col-xs-2" ng-click="headquarter.selected = !headquarter.selected"><span class="fa " ng-class="headquarter.selected ? 'fa-check-square' : 'fa-square'"></span></div>
+                        <div class="col-xs-2">{{headquarter.no}}</div> 
+                        <div class="col-xs-6">{{headquarter.nome}}</div> 
+                        <div class="col-xs-2">{{headquarter.estab}}</div>  
+                    </div>
+                </div>
+                <hr>
+                <!-- search -->            
+                <div class="row grid-buttons">
+                    <div class="col-xs-12">
+                        <div class="col-xs-6">
+                            Pesquise Cliente: <br><input type="text" placeholder="no ou nome" ng-model="filters.searchHeadquarter">
+                        </div>  
+                        <div class="col-xs-4 text-right">
+                            <br>
+                            <button class="btn btn-success" style="padding: 3px 30px;" ng-click="requestInvoicing()"><i class="fa" ng-class="loadingInvoicing ? 'fa-spinner fa-spin' : 'fa-book'"></i> &nbsp;Gerar Faturas</button>
+                            <br><span style="color:green" ng-if="invoiced">Geração concluida</span>
+                        </div>                     
+
+                    </div>
+                </div> 
+            </div>
     </div>
 
 

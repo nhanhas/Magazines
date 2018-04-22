@@ -61,6 +61,21 @@ body{
 
     }
 
+    //headquarters list option
+    #headquarters {
+        
+        .grid-rows{
+            height: 600px;
+            overflow: auto;
+        }
+        .grid-buttons{
+            margin-top: 20px;
+            input{ 
+                color:black;
+            }
+        }
+    }
+
 } 
 
 

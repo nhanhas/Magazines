@@ -41,6 +41,17 @@ app.service('StoreService', ['$http', 'FrameworkUtils', function($http, Framewor
         });
     }
 
+    //POST get Client
+    this.getHeadquartersService  = function(credentials){
+    
+        let serviceURL = this.baseURL + '/DRIVE_getHeadquarters.php';
+        let parameter = { credentials : credentials };
+
+        return FrameworkUtils.Http_POST(serviceURL, parameter).then(function(result){     
+            return result.data;
+        });
+    }
+
     this.getProductsByBaseService  = function(credentials, baseRef){
        
         let serviceURL = this.baseURL + '/DRIVE_getProductsByBase.php';
@@ -68,7 +79,16 @@ app.service('StoreService', ['$http', 'FrameworkUtils', function($http, Framewor
         });
     }
     
-    
+    this.generateInvoicing = function(credentials, clients){
+        let serviceURL = this.baseURL + '/DRIVE_generateInvoice.php';
+        let parameter = {   credentials : credentials,
+                            clients : clients
+                        };
+
+        return FrameworkUtils.Http_POST(serviceURL, parameter).then(function(result){     
+           return result.data;
+        });
+    }
 
 
 }]);

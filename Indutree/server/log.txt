@@ -1,30 +1,31 @@
 
 
-----------------------2018-04-22 16:48:14----------------------
-{	
-	"credentials" : {
-		"userCode" : "suporte",
-		"password" : "12345678",
-		"applicationType" : "HYU45F-FKEIDD-K93DUJ-ALRNJE",
-		"company" : ""
-	},
-	"clients" : [
-		{ "no" : 3137686}
-		]
-	
-}
+----------------------2018-04-22 20:42:17----------------------
+{"credentials":{"userCode":"jb","password":"1","company":"","applicationType":"HYU45F-FKEIDD-K93DUJ-ALRNJE"},"clients":[{"no":3137686,"estab":0}]}
 
-----------------------2018-04-22 16:48:14----------------------
+----------------------2018-04-22 20:42:17----------------------
 Starting with Invoicing...<br>
 
-----------------------2018-04-22 16:48:21----------------------
+----------------------2018-04-22 20:42:19----------------------
 #SUCCESS# Invoice created for customer: 3137686 : MGP - Lisboa And Guias updated to Faturadas<br>
 
-----------------------2018-04-22 16:48:22----------------------
-#SUCCESS# Invoice (nº127) SIGNED for customer: 3137686 : MGP - Lisboa And Guias updated to Faturadas<br>
+----------------------2018-04-22 20:42:20----------------------
+#SUCCESS# Invoice (nº129) SIGNED for customer: 3137686 : MGP - Lisboa And Guias updated to Faturadas<br>
 
-----------------------2018-04-22 16:48:25----------------------
+----------------------2018-04-22 20:42:21----------------------
 #SUCCESS# Invoice created for customer: 3137686 : MGP - Porto And Guias updated to Faturadas<br>
 
-----------------------2018-04-22 16:48:26----------------------
-#SUCCESS# Invoice (nº128) SIGNED for customer: 3137686 : MGP - Porto And Guias updated to Faturadas<br>
+----------------------2018-04-22 20:42:22----------------------
+#SUCCESS# Invoice (nº130) SIGNED for customer: 3137686 : MGP - Porto And Guias updated to Faturadas<br>
+
+----------------------2018-04-22 20:43:29----------------------
+{"credentials":{"userCode":"jb","password":"1","company":"","applicationType":"HYU45F-FKEIDD-K93DUJ-ALRNJE"},"clients":[{"no":3137686,"estab":0}]}
+
+----------------------2018-04-22 20:43:29----------------------
+Starting with Invoicing...<br>
+
+----------------------2018-04-22 20:43:30----------------------
+There is no Guia consign not invoiced for this customer: 3137686 - MGP - Lisboa<br>
+
+----------------------2018-04-22 20:43:30----------------------
+There is no Guia consign not invoiced for this customer: 3137686 - MGP - Porto<br>

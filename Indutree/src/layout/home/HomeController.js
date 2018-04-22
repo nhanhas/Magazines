@@ -9,14 +9,18 @@ app
         $scope.productList = undefined;
         $scope.clientList = undefined;
         $scope.filters = {
-            searchClient : ''
+            searchClient : '',
+            searchHeadquarter: ''
         };
         $scope.loading = false;
         $scope.waybillDateHour = {
             loadDate : '',
             loadHour : ''
         }
-                
+        //Invoicing
+        $scope.headquartersList = undefined;
+        $scope.loadingInvoicing = false;
+
         //TODO - change this
         /*$scope.credentials = {
             userCode : 'jb',
@@ -70,7 +74,7 @@ app
                     $scope.getProducts();                    
                     break;
                 case 2:
-                    
+                    $scope.getHeadquarters();
                     break;
                 
             }
@@ -154,6 +158,50 @@ app
                     }
                 });
             }
+        }
+
+        //Get All HeadQuarters
+        $scope.getHeadquarters = function(){
+            StoreService.getHeadquartersService($scope.credentials).then(function(result){
+                if(result.code === 0){
+                    console.log(result.data);
+                    $scope.headquartersList = result.data;
+                    
+                }else{
+                }
+            });
+        }
+
+        $scope.requestInvoicing = function(){
+           
+            let clientsToInvoice = []; // if is empty, allow ALL, otherwise none
+            $scope.loadingInvoicing = true;
+            $scope.invoiced = false; //for green message
+           
+            //#1 - iterate clients
+            $scope.headquartersList.forEach(function(client) {
+                if(client.selected)
+                    clientsToInvoice.push({no : client.no, estab : client.estab});
+            });
+
+            //call Service
+            StoreService.generateInvoicing($scope.credentials, clientsToInvoice).then(function(result){
+                $scope.loadingInvoicing = false;
+                $scope.invoiced = true;
+                if(result.code === 0){
+                    console.log(result.data);                        
+                }else{
+                    
+                }
+            });
+        }
+
+        $scope.selectAllHeadquarters = function(){
+            let filteredClients = $filter('filter')($scope.headquartersList, $scope.filters.searchHeadquarter);
+            filteredClients.forEach(function(client) {
+                client.selected = true;
+            });
+
         }
 
         //Initialize!
