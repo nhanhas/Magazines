@@ -6,5 +6,6 @@ define("backendUrl"     , "https://sis04.drivefx.net/45B784DD/PHCWS/REST"); //TO
 //#0 - Define some Constants
 define("consignNdoc"    , 16);
 define("refundNdoc"     , 18);
+define("invoiceNdoc"    , 1);
 
  ?>

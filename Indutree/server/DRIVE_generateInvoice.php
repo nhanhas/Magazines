@@ -66,17 +66,82 @@ foreach ($DRIVE_clients as $headquarter) {
             continue;
         }
         
-        print_r(json_encode($refundWayBill));
-        exit(1);
+        //#4 - Get new instance of Ft
+        $newInstanceFt = DRIVE_getNewInstance('Ft', invoiceNdoc);
+        if($newInstanceFt == null){
+            $msg = "#ERROR# on get new instance of Invoice for customer: ".$customer['no']." - ".$customer['nome']."<br>";
+            logData($msg);
+            continue;
+        }
+
+        //#4.1 - Fulfill Client as HeadQuarters
+        $newInstanceFt['no'] =  $headquarter->no;
+        $newInstanceFt['estab'] =  0;
+
+        //#4.2 - Then sync
+        $newInstanceFt = DRIVE_actEntiy("Ft", $newInstanceFt);
+        if($newInstanceFt == null){
+            $msg = "#ERROR# on sync for no estab of Invoice for customer: ".$customer['no']." - ".$customer['nome']."<br>";
+            logData($msg);
+            continue;
+        }
+
+        //#4.3 - fulfill fis
+        $calculatedLines = UTILS_getCalculatedLines($consignWayBill, $refundWayBill);
+        $newInstanceFt['fis'] = $calculatedLines;
+
+        //#4.4 - Then sync
+        $newInstanceFt = DRIVE_actEntiy("Ft", $newInstanceFt);
+        if($newInstanceFt == null){
+            $msg = "#ERROR# on sync for product lines of Invoice for customer: ".$customer['no']." - ".$customer['nome']."<br>";
+            logData($msg);
+            continue;
+        }
+
+        //#4.4.1 - Set references to Guias
+        //Refund
+        $newInstanceFt['u6525_indutree_ft']['refund_ftstamp'] = $refundWayBill['ftstamp'];;
+        $newInstanceFt['u6525_indutree_ft']['refund_uniqueid'] = $refundWayBill['logInfo'];;
+        //Consign
+        $newInstanceFt['u6525_indutree_ft']['consign_ftsamp'] = $consignWayBill['ftstamp'];;
+        $newInstanceFt['u6525_indutree_ft']['consign_uniqueid'] = $consignWayBill['logInfo'];;
+
+        //#4.5 - Save Invoice
+        $newInstanceFt = DRIVE_saveInstance('Ft', $newInstanceFt);
+        if($newInstanceFt == null){
+            $msg = "#ERROR# on Invoice for customer: ".$customer['no']." - ".$customer['nome']."<br>";
+            logData($msg);
+            continue;
+        }
+
+        //#5 - Update Consign and Refund Bills to be 'Faturada'
+        $consignWayBill['u6525_indutree_ft']['invoiced'] = true;
+        $refundWayBill['u6525_indutree_ft']['invoiced'] = true;
+        $consignWayBill = DRIVE_saveInstance('Ft', $consignWayBill);
+        $refundWayBill = DRIVE_saveInstance('Ft', $refundWayBill);
+
+        $msg = "#SUCCESS# Invoice created for customer: ".$customer['no']." : ".$customer['nome']." And Guias updated to Faturadas<br>";
+        logData($msg);
+
+        //#6 - Sign Invoice
+        $newInstanceFt = DRIVE_signDocument($newInstanceFt);
+        if($newInstanceFt == null){
+            $msg = "#ERROR# Sign Invoice - customer ".$customer['nome']."(n.".$customer['no'].").<br><br>";
+            logData($msg);
+            continue;
+        }else{
+            $msg = "#SUCCESS# Invoice (nº".$newInstanceFt['fno'].") SIGNED for customer: ".$customer['no']." : ".$customer['nome']." And Guias updated to Faturadas<br>";
+            logData($msg);
+        }
+
     }
     
     
 
 }
 
-
-
-
+$msg = '{"code": 0, "message":"", "data": ""}';
+echo $msg;
 exit(1);
 
 
@@ -479,7 +544,41 @@ function DRIVE_getRefundByStamp($refundStamp){
  * This Block is responsible for all
  * needed and re-usable code
  */
-//#A - Log and Echo messages from script
+
+//#A - Calculated the diference between consign and refund
+function UTILS_getCalculatedLines($consignWayBill, $refundWayBill){
+    $calculatedLines = array();
+
+    //#0 - Store description of estab
+    $descriptionLine = array(
+        'design' => 'Relativo ao cliente '.$consignWayBill['nome'].' (estab. '.$consignWayBill['estab'].')',
+        'qtt' => 0
+    );
+
+    $calculatedLines[] = $descriptionLine;
+
+    //#1 - Iterate both product lines
+    foreach($consignWayBill['fis'] as $consignLine){
+        foreach($refundWayBill['fis'] as $refundLine){
+            if($consignLine['ref'] == $refundLine['ref']){
+                //#2 - create a product with diference
+                $newLine = array(
+                    'ref' => $consignLine['ref'],
+                    'qtt' => $consignLine['qtt'] - $refundLine['qtt']
+                );
+
+                //#3 - store it in array
+                $calculatedLines[] = $newLine;
+            }
+        }
+    }
+
+    //#4 - return calculated lines (fis)
+    return $calculatedLines;
+ 
+}
+
+//#B - Log and Echo messages from script
 function logData($data){
 
     //echo($data);
