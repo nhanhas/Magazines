@@ -195,6 +195,9 @@ function BIZ_createDocument($ndoc, $customer, $allRequestedReferences, $invoiceT
 		return null;
     }
 
+    //#3.0 - this flag only to control if consign has rows with qtt = 0
+    $consignHasZeroQttRows = false;
+
     //#3 - Now add references - NOTE: $reference in foreach is not a base product
     foreach($allRequestedReferences as $reference){
         //#3.1 - try to get reference subscribed for this client
@@ -213,6 +216,7 @@ function BIZ_createDocument($ndoc, $customer, $allRequestedReferences, $invoiceT
         switch ($invoiceType) {
             case 0:
                 $productRow['qtt'] = $subscribedArticle['quantity'];
+                $consignHasZeroQttRows = $consignHasZeroQttRows || ($productRow['qtt'] == 0);                
                 break;
             case 1:
                 $productRow['qtt'] = 0;
@@ -250,6 +254,28 @@ function BIZ_createDocument($ndoc, $customer, $allRequestedReferences, $invoiceT
         $newInstanceFt['hcarga'] = $DRIVE_waybillConfig->loadHour;
     }
 
+    //#3.8 - If type is 0 - Consign, we have to re-Sync if there is any qtt = 0 row
+    if($invoiceType == 0 && $consignHasZeroQttRows == true){
+        //#3.8.1 - Now we have to re-iterate requested products, and reset its qtt
+        foreach($allRequestedReferences as $reference){
+            //#3.8.2 - try to get reference subscribed for this client
+            $subscribedArticle = UTILS_getSubscribedStByRef($customer, $reference);
+            if($subscribedArticle == null){
+                //means that this client does not subscribed this article
+                continue;
+            }
+
+            //#3.8.3 - re-set quantity
+            for ($i = 0; $i < sizeof($newInstanceFt['fis']); $i++) {
+                if($newInstanceFt['fis'][$i]['ref'] == $reference){
+                    $newInstanceFt['fis'][$i]['qtt'] = $subscribedArticle['quantity'];
+                }                
+            }
+        }
+
+        //#3.8.4 - Re-sync
+        $newInstanceFt = DRIVE_actEntiy("Ft", $newInstanceFt);
+    }
 
     //#4 - Save Invoice
 	$newInstanceFt = DRIVE_saveInstance("Ft", $newInstanceFt);
