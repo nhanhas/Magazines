@@ -79,10 +79,11 @@ app.service('StoreService', ['$http', 'FrameworkUtils', function($http, Framewor
         });
     }
     
-    this.generateInvoicing = function(credentials, clients){
+    this.generateInvoicing = function(credentials, products, clients){
         let serviceURL = this.baseURL + '/DRIVE_generateInvoice.php';
         let parameter = {   credentials : credentials,
-                            clients : clients
+                            clients : clients,
+                            products : products
                         };
 
         return FrameworkUtils.Http_POST(serviceURL, parameter).then(function(result){     

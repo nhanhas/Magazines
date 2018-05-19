@@ -67,6 +67,8 @@ app
         }
 
         $scope.menuSelection = function(option){
+            $scope.clientList = [];
+            $scope.productList = [];
             $scope.menuSelected = option;
 
             switch (option) {
@@ -74,7 +76,8 @@ app
                     $scope.getProducts();                    
                     break;
                 case 2:
-                    $scope.getHeadquarters();
+                    //$scope.getHeadquarters();
+                    $scope.getProducts(); 
                     break;
                 
             }
@@ -160,6 +163,44 @@ app
             }
         }
 
+        $scope.requestInvoices = function(){
+            let productsToWayBill = [];
+            let clientsToWayBill = []; // if is empty, allow ALL, otherwise none
+            $scope.loading = true;
+            $scope.waybilled = false; //for green message
+           
+            //#1 - iterate base products
+            $scope.productList.forEach(function(baseProduct) {
+                if(baseProduct.generated && baseProduct.generated.length > 0){
+                    //#2 - iterate their collection
+                    baseProduct.generated.forEach(function(product) {
+                        if(product.selected)
+                            productsToWayBill.push(product.ref);
+                    });
+                }
+            });
+
+            //#2 - iterate clients
+            $scope.clientList.forEach(function(client) {
+                if(client.selected)
+                    clientsToWayBill.push({no : client.no, estab : client.estab, invoiceHeadquarters: false});
+            });
+
+            if(productsToWayBill.length > 0){
+
+                //call Service
+                StoreService.generateInvoicing($scope.credentials, productsToWayBill, clientsToWayBill).then(function(result){
+                    $scope.loading = false;
+                    $scope.waybilled = true;
+                    if(result.code === 0){
+                        console.log(result.data);                        
+                    }else{
+                        
+                    }
+                });
+            }
+        }
+
         //Get All HeadQuarters
         $scope.getHeadquarters = function(){
             StoreService.getHeadquartersService($scope.credentials).then(function(result){
@@ -172,6 +213,7 @@ app
             });
         }
 
+        //Deprecated
         $scope.requestInvoicing = function(){
            
             let clientsToInvoice = []; // if is empty, allow ALL, otherwise none
