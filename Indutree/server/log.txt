@@ -157,3 +157,15 @@ A Data e Hora de início de transporte não pode ser anterior à data e hora atu
 
 ----------------------2018-05-09 22:12:45----------------------
 Customer MGP - Lisboa(n.3137686) already waybilled in this script iteration <br><br>
+
+----------------------2018-05-19 17:05:28----------------------
+{"credentials":{"userCode":"jb","password":"1","company":"","applicationType":"HYU45F-FKEIDD-K93DUJ-ALRNJE"},"clients":[{"no":3137686,"estab":1,"invoiceHeadquarters":false}],"products":["BGAMER12345"]}
+
+----------------------2018-05-19 17:05:28----------------------
+Starting with Invoicing...<br>
+
+----------------------2018-05-19 17:05:31----------------------
+Guia Refund (n. -2) that matches this consign: -3 Is in DRAFT MODE. Customer: 3137686 - MGP - Lisboa<br>
+
+----------------------2018-05-19 17:05:31----------------------
+There is no Guia consign not invoiced for this customer: 3137686 - MGP - Porto<br>

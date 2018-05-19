@@ -14,6 +14,7 @@ include("DRIVE_config.php");
 $inputJSON = file_get_contents('php://input');
 $DRIVE_credentials  = json_decode($inputJSON)->credentials;
 $DRIVE_clients   = json_decode($inputJSON)->clients;
+$DRIVE_products   = json_decode($inputJSON)->products;
 logData($inputJSON);
 //print_r($DRIVE_clients); //Debug References
 //exit(1);
@@ -32,112 +33,132 @@ if($loginResult == false){
 }
 
 //#3 - Start with invoicing MAIN iteration
-foreach ($DRIVE_clients as $headquarter) {
-    //#3.1 - Get All Estab Active for this headquarter
-    $clientEstabs = DRIVE_getEstabFromHeadquarters($headquarter->no);
-    if($clientEstabs == null){
-        $msg = "There is no estabs for this headquarter: ".$headquarter->no."<br>";
+foreach ($DRIVE_clients as $requestedClient) {
+
+    //#3.1 Get Full Client From Request (do not need)
+    
+    //#3.2 Get All Guias Consign From Client ( guia by no and estab )
+    $consignWayBillList = DRIVE_getGuiasByNoEstab(consignNdoc, $requestedClient->no, $requestedClient->estab);
+    if($consignWayBillList == null){
+        $msg = "There are no Guias consign for this customer: ".$requestedClient->no.", estab: " . $requestedClient->estab . "<br>";
         logData($msg);
         continue;
     }
 
-    //#3.2 - Iterate estabs
-    foreach($clientEstabs as $customer){
-        //#3.3 - Get Guias Consign not invoiced for this 
-        $consignWayBill = DRIVE_getGuiasNotInvoiced($customer['no'], $customer['estab']);
-        if($consignWayBill == null){
-            $msg = "There is no Guia consign not invoiced for this customer: ".$customer['no']." - ".$customer['nome']."<br>";
-            logData($msg);
-            continue;
-        }
-        
-        //3.4 - Get Guia Refund for this Consign
-        $refundWayBill = DRIVE_getRefundByStamp($consignWayBill['u6525_indutree_ft']['refund_ftstamp']);
-        if($consignWayBill == null){
-            $msg = "There is no Guia Refund that matches this consign: ".$consignWayBill['fno']."for this customer: ".$customer['no']." - ".$customer['nome']."<br>";
-            logData($msg);
-            continue;
-        }
+    //#3.2.1 - Filter WayBills only with requested refs
+    $consignWayBillList = UTILS_getFilteredDocByRefs($consignWayBillList, $DRIVE_products);
 
-        //#3.5 - Check if it is Draft Record
-        if($refundWayBill['draftRecord'] == true){
-            $msg = "Guia Refund (n. ".$refundWayBill['fno'].") that matches this consign: ".$consignWayBill['fno']." Is in DRAFT MODE. Customer: ".$customer['no']." - ".$customer['nome']."<br>";
-            logData($msg);
-            continue;
-        }
-        
-        //#4 - Get new instance of Ft
-        $newInstanceFt = DRIVE_getNewInstance('Ft', invoiceNdoc);
-        if($newInstanceFt == null){
-            $msg = "#ERROR# on get new instance of Invoice for customer: ".$customer['no']." - ".$customer['nome']."<br>";
-            logData($msg);
-            continue;
-        }
-
-        //#4.1 - Fulfill Client as HeadQuarters
-        $newInstanceFt['no'] =  $headquarter->no;
-        $newInstanceFt['estab'] =  0;
-
-        //#4.2 - Then sync
-        $newInstanceFt = DRIVE_actEntiy("Ft", $newInstanceFt);
-        if($newInstanceFt == null){
-            $msg = "#ERROR# on sync for no estab of Invoice for customer: ".$customer['no']." - ".$customer['nome']."<br>";
-            logData($msg);
-            continue;
-        }
-
-        //#4.3 - fulfill fis
-        $calculatedLines = UTILS_getCalculatedLines($consignWayBill, $refundWayBill);
-        $newInstanceFt['fis'] = $calculatedLines;
-
-        //#4.4 - Then sync
-        $newInstanceFt = DRIVE_actEntiy("Ft", $newInstanceFt);
-        if($newInstanceFt == null){
-            $msg = "#ERROR# on sync for product lines of Invoice for customer: ".$customer['no']." - ".$customer['nome']."<br>";
-            logData($msg);
-            continue;
-        }
-
-        //#4.4.1 - Set references to Guias
-        //Refund
-        $newInstanceFt['u6525_indutree_ft']['refund_ftstamp'] = $refundWayBill['ftstamp'];;
-        $newInstanceFt['u6525_indutree_ft']['refund_uniqueid'] = $refundWayBill['logInfo'];;
-        //Consign
-        $newInstanceFt['u6525_indutree_ft']['consign_ftsamp'] = $consignWayBill['ftstamp'];;
-        $newInstanceFt['u6525_indutree_ft']['consign_uniqueid'] = $consignWayBill['logInfo'];;
-
-        //#4.5 - Save Invoice
-        $newInstanceFt = DRIVE_saveInstance('Ft', $newInstanceFt);
-        if($newInstanceFt == null){
-            $msg = "#ERROR# on Invoice for customer: ".$customer['no']." - ".$customer['nome']."<br>";
-            logData($msg);
-            continue;
-        }
-
-        //#5 - Update Consign and Refund Bills to be 'Faturada'
-        $consignWayBill['u6525_indutree_ft']['invoiced'] = true;
-        $refundWayBill['u6525_indutree_ft']['invoiced'] = true;
-        $consignWayBill = DRIVE_saveInstance('Ft', $consignWayBill);
-        $refundWayBill = DRIVE_saveInstance('Ft', $refundWayBill);
-
-        $msg = "#SUCCESS# Invoice created for customer: ".$customer['no']." : ".$customer['nome']." And Guias updated to Faturadas<br>";
+    //#3.3 - Get All Guias Refund From Client ( guia by no and estab )
+    $refundWayBillList = DRIVE_getGuiasByNoEstab(refundNdoc, $requestedClient->no, $requestedClient->estab);
+    if($refundWayBillList == null){
+        $msg = "There are no Guias Refund for this customer: ".$requestedClient->no.", estab: " . $requestedClient->estab . "<br>";
         logData($msg);
+    }
+    //#3.3.1 - Filter WayBills only with requested refs
+    $refundWayBillList = UTILS_getFilteredDocByRefs($refundWayBillList, $DRIVE_products);
 
-        //#6 - Sign Invoice
-        $newInstanceFt = DRIVE_signDocument($newInstanceFt);
-        if($newInstanceFt == null){
-            $msg = "#ERROR# Sign Invoice - customer ".$customer['nome']."(n.".$customer['no'].").<br><br>";
-            logData($msg);
-            continue;
-        }else{
-            $msg = "#SUCCESS# Invoice (nº".$newInstanceFt['fno'].") SIGNED for customer: ".$customer['no']." : ".$customer['nome']." And Guias updated to Faturadas<br>";
-            logData($msg);
+
+    //#3.3 For each guia, get de ref and qtt requested
+    $linesToInvoice = array();
+
+    //#3.3.1 - Iterate consigns
+    foreach($consignWayBillList as $consignWayBill){
+        //#3.3.2 - iterate lines 
+        foreach($consignWayBill['fis'] as $invoiceLine){
+            //#3.3.3 - store it in final lines array, if requested by user
+            if(in_array($invoiceLine['ref'], $DRIVE_products)){
+                $linesToInvoice[] = array(
+                    "ref" => $invoiceLine['ref'],
+                    "qtt" => $invoiceLine['qtt']
+                );
+            }
         }
+    }
 
+    //#3.3.2 - Iterate Refunds and recalc difference
+    foreach($refundWayBillList as $refundWayBill){
+        //#3.3.2 - iterate lines 
+        foreach($refundWayBill['fis'] as $refundLine){
+            //#3.3.3 - store it in final lines array, if requested by user
+            if(in_array($refundLine['ref'], $DRIVE_products)){
+                //#3.3.4 - recalc qtt with difference
+                for($index = 0; $index < sizeof($linesToInvoice); $index++){                   
+                    if($linesToInvoice[$index]['ref'] == $refundLine['ref']){
+                        $linesToInvoice[$index]['qtt'] = $linesToInvoice[$index]['qtt'] - $refundLine['qtt'];
+                    }
+                }
+               
+            }
+        }
+    }
+    //#3.4 Make invoice to selected Client or its headquarted
+    if(empty($linesToInvoice)){
+        $msg = "There is nothing to invoice to this customer: ".$requestedClient->no.", estab: " . $requestedClient->estab . "<br>";
+        logData($msg);
+        continue;
+    }
+
+    //#4 - Get new instance of Ft
+    $newInstanceFt = DRIVE_getNewInstance('Ft', invoiceNdoc);
+    if($newInstanceFt == null){
+        $msg = "#ERROR# on get new instance of Invoice for customer: ".$requestedClient->no." - ".$requestedClient->estab."<br>";
+        logData($msg);
+        continue;
+    }
+    //#4.1 - Fulfill Client as HeadQuarters Or Estab
+    if($requestedClient->invoiceHeadquarter == true){
+        $newInstanceFt['no'] =  $requestedClient->no;
+        $newInstanceFt['estab'] =  0;
+    }else{
+        $newInstanceFt['no'] =  $requestedClient->no;
+        $newInstanceFt['estab'] =  $requestedClient->estab;
     }
     
-    
+    //#4.2 - Then sync
+    $newInstanceFt = DRIVE_actEntiy("Ft", $newInstanceFt);
+    if($newInstanceFt == null){
+        $msg = "#ERROR# on sync for no estab of Invoice for customer: ".$requestedClient->no." - ".$requestedClient->estab."<br>";
+        logData($msg);
+        continue;
+    }
+    //#4.3 - fulfill fis    
+    $newInstanceFt['fis'] = $linesToInvoice;
+    //#4.4 - Then sync
+    $newInstanceFt = DRIVE_actEntiy("Ft", $newInstanceFt);
+    if($newInstanceFt == null){
+        $msg = "#ERROR# on sync for product lines of Invoice for customer: ".$requestedClient->no." - ".$requestedClient->estab."<br>";
+        logData($msg);
+        continue;
+    }
+   
+    //logData(json_encode($newInstanceFt));
 
+    //#4.5 - Save Invoice
+    $newInstanceFt = DRIVE_saveInstance('Ft', $newInstanceFt);
+    if($newInstanceFt == null){
+        $msg = "#ERROR# on Invoice for customer: ".$requestedClient->no." - ".$requestedClient->estab."<br>";
+        logData($msg);
+        continue;
+    }
+
+    $msg = "#SUCCESS# Invoice created for customer: ".$requestedClient->no." : ".$requestedClient->estab." <br>";
+    logData($msg);
+
+    //#6 - Sign Invoice
+    $newInstanceFt = DRIVE_signDocument($newInstanceFt);
+    if($newInstanceFt == null){
+        $msg = "#ERROR# Sign Invoice - customer ".$requestedClient->no.".<br><br>";
+        logData($msg);
+        continue;
+    }else{
+        $msg = "#SUCCESS# Invoice (nº".$newInstanceFt['fno'].") SIGNED for customer: ".$requestedClient->no." : ".$requestedClient->estab."<br>";
+        logData($msg);
+    }
+
+
+    //print_r('Client no: '. $requestedClient->no.", estab: " . $requestedClient->estab . "<br>");
+    //print_r($linesToInvoice);
+         
 }
 
 $msg = '{"code": 0, "message":"", "data": ""}';
@@ -539,6 +560,101 @@ function DRIVE_getRefundByStamp($refundStamp){
     return $response['result'][0];
 }
 
+//#K - Get Guias Consign - This will search only for Guias Consign
+function DRIVE_getGuiasByNoEstab($ndoc, $clientNo, $clientEstab){
+    global $ch;
+
+        // #1 - get Order By No estab = 0
+	$url = backendUrl . '/SearchWS/QueryAsEntities';
+
+    $params =  array('itemQuery' => '
+    {
+        "distinct": false,
+        "entityName": "Ft",
+        "filterCod": "",
+        "filterItems": [
+          {
+            "checkNull": false,
+            "collationType": 0,
+            "comparison": 0,
+            "filterItem": "ndoc",
+            "groupItem": 1,
+            "skipItemTranslate": false,
+            "valueItem": '.$ndoc.'
+          },
+          {
+            "checkNull": false,
+            "collationType": 0,
+            "comparison": 0,
+            "filterItem": "",
+            "groupItem": 18,
+            "skipItemTranslate": false,
+            "valueItem": {}
+          },
+          {
+            "checkNull": false,
+            "collationType": 0,
+            "comparison": 0,
+            "filterItem": "draftRecord",
+            "groupItem": 1,
+            "skipItemTranslate": false,
+            "valueItem": false
+          }
+          {
+            "checkNull": false,
+            "collationType": 0,
+            "comparison": 0,
+            "filterItem": "no",
+            "groupItem": 1,
+            "skipItemTranslate": false,
+            "valueItem": '.$clientNo.'
+          },
+          {
+            "checkNull": false,
+            "collationType": 0,
+            "comparison": 0,
+            "filterItem": "estab",
+            "groupItem": 0,
+            "skipItemTranslate": false,
+            "valueItem": '.$clientEstab.'
+          },
+          {
+            "checkNull": false,
+            "collationType": 0,
+            "comparison": 0,
+            "filterItem": "",
+            "groupItem": 17,
+            "skipItemTranslate": false,
+            "valueItem": {}
+          }
+        ],
+        "groupByItems": [],
+        "joinEntities": [],
+        "lazyLoaded": false,
+        "limit": 20,
+        "ndoc": 0,
+        "offset": 0,
+        "orderByItems": [],
+        "SelectItems": [
+        ]
+      }');
+
+
+
+	$response=DRIVE_Request($ch, $url, $params);
+
+	if(empty($response)){
+		return false;
+	} else if(count($response['result']) == 0 ){
+		return null;
+	}
+
+    return $response['result'];
+
+}
+
+
+
 /**
  * Utils Sections
  * This Block is responsible for all
@@ -577,6 +693,37 @@ function UTILS_getCalculatedLines($consignWayBill, $refundWayBill){
     return $calculatedLines;
  
 }
+
+//#B - Get Documents Filtered by Product Ref
+function UTILS_getFilteredDocByRefs($wayBillList, $productsRefs){
+    $wayBillsAlreadyContempled = array();
+    $filteredWayBills = array();
+
+    //#1 - For each product Ref, check if it is in consign list
+    foreach($productsRefs as $ref){
+        //#2 - Iterate Waybills
+        foreach($wayBillList as $waybill){
+            if( in_array($waybill['ftstamp'], $wayBillsAlreadyContempled)){
+                continue;
+            }
+
+            //#3 - check if it is in Fis
+            foreach($waybill['fis'] as $invoiceLine){
+                if($invoiceLine['ref'] == $ref){
+                    //#4 - add it to filtered list
+                    $wayBillsAlreadyContempled[] = $waybill['ftstamp'];
+                    $filteredWayBills[] = $waybill;
+                }
+            }
+        }
+    }
+    
+    //#5 - Return filtered list
+    return $filteredWayBills;
+
+}
+
+
 
 //#B - Log and Echo messages from script
 function logData($data){
