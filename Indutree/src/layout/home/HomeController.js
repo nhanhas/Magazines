@@ -183,7 +183,7 @@ app
             //#2 - iterate clients
             $scope.clientList.forEach(function(client) {
                 if(client.selected)
-                    clientsToWayBill.push({no : client.no, estab : client.estab, invoiceHeadquarters: false});
+                    clientsToWayBill.push({no : client.no, estab : client.estab, invoiceHeadquarters: client.invoiceheadquarter});
             });
 
             if(productsToWayBill.length > 0){
@@ -192,7 +192,7 @@ app
                 StoreService.generateInvoicing($scope.credentials, productsToWayBill, clientsToWayBill).then(function(result){
                     $scope.loading = false;
                     $scope.waybilled = true;
-                    if(result.code === 0){
+                    if(result.code === 0){ 
                         console.log(result.data);                        
                     }else{
                         

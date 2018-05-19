@@ -82,7 +82,8 @@ function DRIVE_getClients(){
         "SelectItems": [
             "no",
             "estab",
-            "nome"
+            "nome",
+            "u6525_indutree_cl.invoiceheadquarter"
         ],
         "filterItems": [         
             {

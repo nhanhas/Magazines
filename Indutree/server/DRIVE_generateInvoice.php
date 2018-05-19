@@ -34,7 +34,7 @@ if($loginResult == false){
 
 //#3 - Start with invoicing MAIN iteration
 foreach ($DRIVE_clients as $requestedClient) {
-
+  
     //#3.1 Get Full Client From Request (do not need)
     
     //#3.2 Get All Guias Consign From Client ( guia by no and estab )
@@ -105,13 +105,16 @@ foreach ($DRIVE_clients as $requestedClient) {
         logData($msg);
         continue;
     }
+
     //#4.1 - Fulfill Client as HeadQuarters Or Estab
-    if($requestedClient->invoiceHeadquarter == true){
+    if($requestedClient->invoiceHeadquarters == true){
         $newInstanceFt['no'] =  $requestedClient->no;
         $newInstanceFt['estab'] =  0;
+        logData("Invoicing HeadQuarter<br>");
     }else{
         $newInstanceFt['no'] =  $requestedClient->no;
         $newInstanceFt['estab'] =  $requestedClient->estab;
+        logData("Invoicing Estab<br>");
     }
     
     //#4.2 - Then sync
