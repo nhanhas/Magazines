@@ -8,4 +8,7 @@ define("consignNdoc"    , 16);
 define("refundNdoc"     , 18);
 define("invoiceNdoc"    , 1);
 
+//#1 - MB - Code
+define("MB_CODE"    , 12176);
+
  ?>

@@ -1,6 +1,6 @@
 <?php
 
-
+include("UTILS_calcReferences.php");
 include("DRIVE_config.php");
 /*****************************************************************
  * This Script is responsible to accept an array of references,
@@ -158,6 +158,29 @@ foreach ($DRIVE_clients as $requestedClient) {
         logData($msg);
     }
 
+    //#7 - Generate Ref MB
+    $baseRefToMB = generateInvoiceBaseRef($newInstanceFt['fno'], $newInstanceFt['ndoc']);
+    logData("MB - base reference created: " . $baseRefToMB . "<br>");
+
+    //#7.1 - Generate Ref MB to include in invoice
+    $referencesMB = calculateReferences(MB_CODE, $newInstanceFt['etotal'], $baseRefToMB);
+    logData("MB  - reference to Invoice: " . $referencesMB . "<br>");
+
+    $newInstanceFt['entidademb'] = strval(MB_CODE);
+    $newInstanceFt['refmb1'] = $referencesMB[0] . $referencesMB[1] . $referencesMB[2];
+    $newInstanceFt['refmb2'] = $referencesMB[3] . $referencesMB[4] . $referencesMB[5];
+    $newInstanceFt['refmb3'] = $referencesMB[6] . $referencesMB[7] . $referencesMB[8];
+    $newInstanceFt['etotalmb'] = $newInstanceFt['etotal'];
+
+    //#7.2 - Save Invoice
+    $newInstanceFt = DRIVE_saveInstance('Ft', $newInstanceFt);
+    if($newInstanceFt == null){
+        $msg = "#ERROR# on save MB in Invoice for customer: ".$requestedClient->no." - ".$requestedClient->estab."<br>";
+        logData($msg);
+    }else{
+        $msg = "#SUCCESS# Invoice created for customer: ".$requestedClient->no." : ".$requestedClient->estab." <br>";
+        logData($msg);
+    }
 
     //print_r('Client no: '. $requestedClient->no.", estab: " . $requestedClient->estab . "<br>");
     //print_r($linesToInvoice);

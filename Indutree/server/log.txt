@@ -1,0 +1,52 @@
+
+
+----------------------2018-05-19 22:22:02----------------------
+{"credentials":{"userCode":"jb","password":"1","company":"","applicationType":"HYU45F-FKEIDD-K93DUJ-ALRNJE"},"clients":[{"no":3137686,"estab":1,"invoiceHeadquarters":true}],"products":["BGAMER12345"]}
+
+----------------------2018-05-19 22:22:02----------------------
+Starting with Invoicing...<br>
+
+----------------------2018-05-19 22:22:04----------------------
+Invoicing HeadQuarter<br>
+
+----------------------2018-05-19 22:22:04----------------------
+#SUCCESS# Invoice created for customer: 3137686 : 1 <br>
+
+----------------------2018-05-19 22:22:45----------------------
+#SUCCESS# Invoice (nº148) SIGNED for customer: 3137686 : 1<br>
+
+----------------------2018-05-19 22:22:45----------------------
+MB - base reference created: 0001148<br>
+
+----------------------2018-05-19 22:22:45----------------------
+MB  - reference to Invoice: 000114837<br>
+
+----------------------2018-05-19 22:22:45----------------------
+Empty save
+
+----------------------2018-05-19 22:22:45----------------------
+#ERROR# on save MB in Invoice for customer: 3137686 - 1<br>
+
+----------------------2018-05-19 22:24:34----------------------
+{"credentials":{"userCode":"jb","password":"1","company":"","applicationType":"HYU45F-FKEIDD-K93DUJ-ALRNJE"},"clients":[{"no":3137686,"estab":1,"invoiceHeadquarters":true}],"products":["BGAMER12345"]}
+
+----------------------2018-05-19 22:24:34----------------------
+Starting with Invoicing...<br>
+
+----------------------2018-05-19 22:24:35----------------------
+Invoicing HeadQuarter<br>
+
+----------------------2018-05-19 22:24:36----------------------
+#SUCCESS# Invoice created for customer: 3137686 : 1 <br>
+
+----------------------2018-05-19 22:24:37----------------------
+#SUCCESS# Invoice (nº149) SIGNED for customer: 3137686 : 1<br>
+
+----------------------2018-05-19 22:24:37----------------------
+MB - base reference created: 0001149<br>
+
+----------------------2018-05-19 22:24:37----------------------
+MB  - reference to Invoice: 000114985<br>
+
+----------------------2018-05-19 22:24:37----------------------
+#SUCCESS# Invoice created for customer: 3137686 : 1 <br>
