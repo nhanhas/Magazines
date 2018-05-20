@@ -195,6 +195,9 @@ function BIZ_createDocument($ndoc, $customer, $allRequestedReferences, $invoiceT
 		return null;
     }
 
+    //#2.2 - Add customer Transporter
+    $newInstanceFt['u6525_indutree_ft']['trasportadora'] = $customer['u6525_indutree_cl']['trasportadora'];
+
     //#3.0 - this flag only to control if consign has rows with qtt = 0
     $consignHasZeroQttRows = false;
 

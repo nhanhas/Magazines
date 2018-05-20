@@ -89,11 +89,17 @@ function DRIVE_getClients(){
         ],
         "filterItems": [         
             {
-                "filterItem": "inactivo",
-                "valueItem": false,
                 "comparison": 0,
-                "groupItem": 0
-            }  
+                "filterItem": "inactivo",
+                "groupItem": 1,
+                "valueItem": false
+              },
+              {
+                "comparison": 0,
+                "filterItem": "u6525_indutree_cl.excludeautoinvoice",
+                "groupItem": 1,
+                "valueItem": false
+              }
         ],
         "orderByItems": [],
         "JoinEntities": [],
