@@ -5,7 +5,8 @@ include("DRIVE_config.php");
 //#1 - Accept POST references
 $inputJSON = file_get_contents('php://input');
 $DRIVE_credentials  = json_decode($inputJSON)->credentials;
-$DRIVE_baseRef  = json_decode($inputJSON)->baseRef;
+$DRIVE_filterRequested  = json_decode($inputJSON)->filterRequested;
+
 
 /*****************************************************************/
 $ch = curl_init();
@@ -17,14 +18,14 @@ if($loginResult == false){
     exit(1);
 }
 
-$products = DRIVE_getProductsByRef($DRIVE_baseRef);
-if($products == null){
-    $msg = '{"code": 100, "message":"Não existem produtos com esta referência base."}';
+$filters = DRIVE_getFilters();
+if($filters == null){
+    $msg = '{"code": 100, "message":"Não existem filtros para este entity name  disponíveis."}';
     echo $msg;
     exit(1);
 }
 
-$msg = '{"code": 0, "message":"", "data": '.json_encode($products).'}';
+$msg = '{"code": 0, "message":"", "data": '.json_encode($filters).'}';
 echo $msg;
 exit(1);
 
@@ -69,35 +70,14 @@ function DRIVE_userLogin(){
 }
 
 
-//#B - Call Drive to return a list of Base Products
-function DRIVE_getProductsByRef($baseRef){
-	global $ch;
+//#B - Call Drive to return a list of Dynamic Entity (filters)
+function DRIVE_getFilters(){
+	global $ch, $DRIVE_filterRequested;
 
 	// #1 - get Order By Id
-	$url = backendUrl . '/SearchWS/Query';
+	$url = backendUrl . '/DynamicTableWS/getEntityRecords';
 
-    $params =  array('itemQuery' => '{
-        "entityName": "St",
-        "distinct": true,
-        "lazyLoaded": false,
-        "SelectItems": [
-            "ref",
-            "design"
-        ],
-        "filterItems": [ 
-            {
-                "filterItem": "ref",
-                "valueItem": "'. $baseRef .'",
-                "comparison": 6,
-                "groupItem": 0
-            }        
-        ],
-        "orderByItems": [],
-        "JoinEntities": [],
-        "groupByItems": []
-      }');
-
-    
+    $params =  array('entityName' => $DRIVE_filterRequested);
 
 	$response=DRIVE_Request($ch, $url, $params);
 

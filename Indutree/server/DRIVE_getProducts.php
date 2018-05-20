@@ -1,6 +1,6 @@
 <?php 
 
-define("backendUrl"     , "https://sis04.drivefx.net/45B784DD/PHCWS/REST"); //TODO CHANGE WITH CLIENT
+include("DRIVE_config.php");
 
 //#1 - Accept POST references
 $inputJSON = file_get_contents('php://input');

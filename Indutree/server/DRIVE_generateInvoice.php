@@ -178,7 +178,7 @@ foreach ($DRIVE_clients as $requestedClient) {
         $msg = "#ERROR# on save MB in Invoice for customer: ".$requestedClient->no." - ".$requestedClient->estab."<br>";
         logData($msg);
     }else{
-        $msg = "#SUCCESS# Invoice created for customer: ".$requestedClient->no." : ".$requestedClient->estab." <br>";
+        $msg = "#SUCCESS# Invoice with REF MB fulfilled for customer: ".$requestedClient->no." : ".$requestedClient->estab." <br>";
         logData($msg);
     }
 

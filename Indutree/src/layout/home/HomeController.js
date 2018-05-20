@@ -1,7 +1,6 @@
 app
     .controller('HomeController', ['$rootScope', '$scope', '$controller', '$timeout', '$location', '$http','$q', '$filter', 'FrameworkUtils', 'StoreService',   function($rootScope, $scope, $controller,$timeout, $location, $http, $q, $filter, FrameworkUtils, StoreService) {
 
-         
         /**
          * Controller Variables
          */
@@ -10,13 +9,27 @@ app
         $scope.clientList = undefined;
         $scope.filters = {
             searchClient : '',
-            searchHeadquarter: ''
+            searchHeadquarter: '',
+            transportadora: '',
+            segmento: ''
         };
         $scope.loading = false;
         $scope.waybillDateHour = {
             loadDate : '',
             loadHour : ''
         }
+
+        //FILTERS
+        //Transport list
+        $scope.transportadoraList = [
+          
+        ];
+
+        //Segmento list
+        $scope.segmentoList = [
+          
+        ];
+
         //Invoicing
         $scope.headquartersList = undefined;
         $scope.loadingInvoicing = false;
@@ -44,7 +57,14 @@ app
             var promises = [];//push all promises
             //promises.push();//Get Catalog of Products 
             
+            //Get Filters
+            var segmentoPromise = $scope.getFilters('a_segs');
+            promises.push(segmentoPromise);
 
+            var transportadoraPromise = $scope.getFilters('u6525_indutree_transp');
+            promises.push(transportadoraPromise);
+
+            
 
             //get All Promises
             $q.all(promises).then(function(result) {
@@ -104,6 +124,22 @@ app
                     $scope.clientList = result.data;
                     
                 }else{
+                }
+            });
+        }
+
+        //Get Filters from Drive FX
+        $scope.getFilters = function(filterRequested){
+            StoreService.getFiltersService($scope.credentials, filterRequested).then(function(result){
+                if(result.code === 0 && result.data.length > 0){
+                    console.log(result.data);
+                    if(filterRequested == 'a_segs'){
+                        $scope.segmentoList = result.data[0].dytables;
+                    }else{
+                        $scope.transportadoraList = result.data[0].dytables;
+                    }       
+                }else{
+                    console.log("filter " + filterRequested + " with empty result");
                 }
             });
         }

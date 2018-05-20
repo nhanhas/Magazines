@@ -91,6 +91,16 @@ app.service('StoreService', ['$http', 'FrameworkUtils', function($http, Framewor
         });
     }
 
+    //POST get filters
+    this.getFiltersService  = function(credentials, entity){
+       
+        let serviceURL = this.baseURL + '/DRIVE_getFilters.php';
+        let parameter = { credentials : credentials, filterRequested : entity };
+
+        return FrameworkUtils.Http_POST(serviceURL, parameter).then(function(result){     
+           return result.data;
+        });
+    }
 
 }]);
 

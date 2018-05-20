@@ -1,6 +1,6 @@
 <?php 
 
-define("backendUrl"     , "https://sis04.drivefx.net/45B784DD/PHCWS/REST"); //TODO CHANGE WITH CLIENT
+include("DRIVE_config.php");
 
 //#1 - Accept POST references
 $inputJSON = file_get_contents('php://input');
@@ -83,7 +83,9 @@ function DRIVE_getClients(){
             "no",
             "estab",
             "nome",
-            "u6525_indutree_cl.invoiceheadquarter"
+            "u6525_indutree_cl.invoiceheadquarter",
+            "segmento",
+            "u6525_indutree_cl.trasportadora"
         ],
         "filterItems": [         
             {
