@@ -58,17 +58,15 @@ app
             //promises.push();//Get Catalog of Products 
             
             //Get Filters
-            var segmentoPromise = $scope.getFilters('a_segs');
-            promises.push(segmentoPromise);
+            $scope.getFilters('a_segs');
+			//we will get transp filter in a_segs
 
-            var transportadoraPromise = $scope.getFilters('u6525_indutree_transp');
-            promises.push(transportadoraPromise);
-
-            
+    
 
             //get All Promises
-            $q.all(promises).then(function(result) {
-
+            return $q.all(promises).then(function(result) {
+				
+				
               
             });        
         }
@@ -135,6 +133,7 @@ app
                     console.log(result.data);
                     if(filterRequested == 'a_segs'){
                         $scope.segmentoList = result.data[0].dytables;
+						$scope.getFilters('u6525_indutree_transp');
                     }else{
                         $scope.transportadoraList = result.data[0].dytables;
                     }       

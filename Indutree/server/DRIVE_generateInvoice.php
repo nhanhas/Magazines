@@ -91,6 +91,14 @@ foreach ($DRIVE_clients as $requestedClient) {
             }
         }
     }
+
+    //#3.3.3 - Iterate invoice lines to remove qtt = 0
+    for($index = 0; $index < sizeof($linesToInvoice); $index++){                   
+        if($linesToInvoice[$index]['qtt'] == 0){
+            unset($linesToInvoice[$index]);
+        }
+    }
+
     //#3.4 Make invoice to selected Client or its headquarted
     if(empty($linesToInvoice)){
         $msg = "There is nothing to invoice to this customer: ".$requestedClient->no.", estab: " . $requestedClient->estab . "<br>";
@@ -154,7 +162,7 @@ foreach ($DRIVE_clients as $requestedClient) {
         logData($msg);
         continue;
     }else{
-        $msg = "#SUCCESS# Invoice (nº".$newInstanceFt['fno'].") SIGNED for customer: ".$requestedClient->no." : ".$requestedClient->estab."<br>";
+        $msg = "#SUCCESS# Invoice (n?".$newInstanceFt['fno'].") SIGNED for customer: ".$requestedClient->no." : ".$requestedClient->estab."<br>";
         logData($msg);
     }
 
@@ -625,7 +633,16 @@ function DRIVE_getGuiasByNoEstab($ndoc, $clientNo, $clientEstab){
             "groupItem": 1,
             "skipItemTranslate": false,
             "valueItem": false
-          }
+          },
+          {
+            "checkNull": false,
+            "collationType": 0,
+            "comparison": 0,
+            "filterItem": "anulada",
+            "groupItem": 1,
+            "skipItemTranslate": false,
+            "valueItem": false
+          },
           {
             "checkNull": false,
             "collationType": 0,
