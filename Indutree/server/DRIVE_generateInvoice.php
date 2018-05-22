@@ -190,6 +190,17 @@ foreach ($DRIVE_clients as $requestedClient) {
         logData($msg);
     }
 
+    //#8 - Send Document by Email
+    $printResult = DRIVE_printDocument($newInstanceFt);
+    if($printResult == null){
+        $msg = "#ERROR# on send Invoice for customer: ".$requestedClient->no." - ".$requestedClient->estab."<br>";
+        logData($msg);
+    }else{
+        $msg = "#SUCCESS# Invoice sent by email for customer: ".$requestedClient->no." : ".$requestedClient->estab." <br>";
+        logData($msg);
+    }
+
+
     //print_r('Client no: '. $requestedClient->no.", estab: " . $requestedClient->estab . "<br>");
     //print_r($linesToInvoice);
          
@@ -696,7 +707,107 @@ function DRIVE_getGuiasByNoEstab($ndoc, $clientNo, $clientEstab){
 
 }
 
+//#L - Get customer by no estab
+function DRIVE_getCustomersByNoEstab($no, $estab){
+    global $ch;
 
+	// #1 - get Order By Id
+	$url = backendUrl . '/SearchWS/QueryAsEntities';
+
+    $params =  array('itemQuery' => '{
+        "entityName": "Cl",
+        "distinct": true,
+        "lazyLoaded": false,
+        "SelectItems": [],
+        "filterItems": [
+          {
+            "filterItem": "no",
+            "valueItem": "'. $no .'",
+            "comparison": 0,
+            "groupItem": 1
+          },
+          {
+            "filterItem": "estab",
+            "valueItem": "'. $estab .'",
+            "comparison": 0,
+            "groupItem": 0
+          }
+        ],
+        "orderByItems": [],
+        "JoinEntities": [],
+        "groupByItems": []
+      }');
+
+
+
+	$response=DRIVE_Request($ch, $url, $params);
+
+	if(empty($response)){
+		return false;
+	} else if(count($response['result']) == 0 ){
+		return null;
+	}
+
+    return $response['result'][0];
+}
+
+//#M - function to print an order
+function DRIVE_printDocument($document){
+    global $ch;
+
+    //#1 - Get customer to get email
+    $customer = DRIVE_getCustomersByNoEstab($document['no'], $document['estab']);
+
+    if($customer['email'] == ''){
+        $msg = "#ATENTION# customer does not have an email: ".$customer['no']." - ".$customer['estab']."<br>";
+        logData($msg);
+        return null;
+    }
+
+    //#1 - doc id is the same of configured in this Sync
+    $docId = $document['ndoc'];
+    $repstamp = '';
+    
+    $url = backendUrl . '/reportws/print';
+
+    $params =  array('options' => '{
+        "docId": '.$docId.',
+        "emailConfig": {
+            "bcc":"",
+            "body":"'. EMAIL_INVOICE_BODY .'",
+            "cc":"",
+            "contentType":"",
+            "isBodyHtml":false,
+            "sendFrom":"suporte@phc.pt",
+            "sendTo":"'. $customer['email'] .'",
+            "sendToMyself":false,
+            "subject":"Envio de Documento"
+        },
+        "generateOnly": false,
+        "isPreview": false,
+        "outputType": 2,
+        "printerId": "",
+        "records": [
+            {
+                "docId": '.$docId.',
+                "entityType": "Ft",
+                "stamp": "'.$document['ftstamp'].'"
+            }
+        ],
+        "reportStamp": "'.REPORT_STAMP.'",
+        "sendToType": 0,
+        "serie": 0
+    
+    }');
+        $response=DRIVE_Request($ch, $url, $params);
+        if(empty($response)){
+            return false;
+        } else if(count($response['result']) == 0 ){
+            return null;
+        }
+
+        return $response['result'];
+}
 
 /**
  * Utils Sections
