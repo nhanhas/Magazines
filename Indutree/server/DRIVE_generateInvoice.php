@@ -38,7 +38,7 @@ foreach ($DRIVE_clients as $requestedClient) {
     //#3.1 Get Full Client From Request (do not need)
     
     //#3.2 Get All Guias Consign From Client ( guia by no and estab )
-    $consignWayBillList = DRIVE_getGuiasByNoEstab(consignNdoc, $requestedClient->no, $requestedClient->estab);
+    $consignWayBillList = DRIVE_getGuiasByNoEstab(consignNdoc, consignNdoc_MANUAL, consignNdoc_CORRECTION, $requestedClient->no, $requestedClient->estab);
     if($consignWayBillList == null){
         $msg = "There are no Guias consign for this customer: ".$requestedClient->no.", estab: " . $requestedClient->estab . "<br>";
         logData($msg);
@@ -49,14 +49,13 @@ foreach ($DRIVE_clients as $requestedClient) {
     $consignWayBillList = UTILS_getFilteredDocByRefs($consignWayBillList, $DRIVE_products);
 
     //#3.3 - Get All Guias Refund From Client ( guia by no and estab )
-    $refundWayBillList = DRIVE_getGuiasByNoEstab(refundNdoc, $requestedClient->no, $requestedClient->estab);
+    $refundWayBillList = DRIVE_getGuiasByNoEstab(refundNdoc, refundNdoc_MANUAL, refundNdoc_CORRECTION, $requestedClient->no, $requestedClient->estab);
     if($refundWayBillList == null){
         $msg = "There are no Guias Refund for this customer: ".$requestedClient->no.", estab: " . $requestedClient->estab . "<br>";
         logData($msg);
     }
     //#3.3.1 - Filter WayBills only with requested refs
     $refundWayBillList = UTILS_getFilteredDocByRefs($refundWayBillList, $DRIVE_products);
-
 
     //#3.3 For each guia, get de ref and qtt requested
     $linesToInvoice = array();
@@ -67,10 +66,22 @@ foreach ($DRIVE_clients as $requestedClient) {
         foreach($consignWayBill['fis'] as $invoiceLine){
             //#3.3.3 - store it in final lines array, if requested by user
             if(in_array($invoiceLine['ref'], $DRIVE_products)){
-                $linesToInvoice[] = array(
-                    "ref" => $invoiceLine['ref'],
-                    "qtt" => $invoiceLine['qtt']
-                );
+                //iterate linesToInvoice Array to check if already added
+                $alreadyAdded = false;
+                for($index = 0; $index < sizeof($linesToInvoice); $index++){
+                    if($linesToInvoice[$index]['ref'] == $invoiceLine['ref']){
+                        $alreadyAdded = true;
+                        //just increment qtt 
+                        $linesToInvoice[$index]['qtt'] = $linesToInvoice[$index]['qtt'] + $invoiceLine['qtt'];
+                    }
+                }
+                //#3.3.4 - If not in final list, add it
+                if($alreadyAdded == false){
+                    $linesToInvoice[] = array(
+                        "ref" => $invoiceLine['ref'],
+                        "qtt" => $invoiceLine['qtt']
+                    );
+                }                
             }
         }
     }
@@ -606,7 +617,7 @@ function DRIVE_getRefundByStamp($refundStamp){
 }
 
 //#K - Get Guias Consign - This will search only for Guias Consign
-function DRIVE_getGuiasByNoEstab($ndoc, $clientNo, $clientEstab){
+function DRIVE_getGuiasByNoEstab($ndoc, $ndoc_MANUAL, $ndoc_CORRECTION, $clientNo, $clientEstab){
     global $ch;
 
         // #1 - get Order By No estab = 0
@@ -622,10 +633,55 @@ function DRIVE_getGuiasByNoEstab($ndoc, $clientNo, $clientEstab){
             "checkNull": false,
             "collationType": 0,
             "comparison": 0,
+            "filterItem": "",
+            "groupItem": 18,
+            "skipItemTranslate": false,
+            "valueItem": {}
+          },
+          {
+            "checkNull": false,
+            "collationType": 0,
+            "comparison": 0,
             "filterItem": "ndoc",
-            "groupItem": 1,
+            "groupItem": 9,
             "skipItemTranslate": false,
             "valueItem": '.$ndoc.'
+          },
+          {
+            "checkNull": false,
+            "collationType": 0,
+            "comparison": 0,
+            "filterItem": "ndoc",
+            "groupItem": 9,
+            "skipItemTranslate": false,
+            "valueItem": '.$ndoc_MANUAL.'
+          },
+          {
+            "checkNull": false,
+            "collationType": 0,
+            "comparison": 0,
+            "filterItem": "ndoc",
+            "groupItem": 0,
+            "skipItemTranslate": false,
+            "valueItem": '.$ndoc_CORRECTION.'
+          },
+          {
+            "checkNull": false,
+            "collationType": 0,
+            "comparison": 0,
+            "filterItem": "",
+            "groupItem": 17,
+            "skipItemTranslate": false,
+            "valueItem": {}
+          },
+          {
+            "checkNull": false,
+            "collationType": 0,
+            "comparison": 0,
+            "filterItem": "",
+            "groupItem": 1,
+            "skipItemTranslate": false,
+            "valueItem": {}
           },
           {
             "checkNull": false,
@@ -800,6 +856,7 @@ function DRIVE_printDocument($document){
     
     }');
         $response=DRIVE_Request($ch, $url, $params);
+		logData(json_encode($response));
         if(empty($response)){
             return false;
         } else if(count($response['result']) == 0 ){
