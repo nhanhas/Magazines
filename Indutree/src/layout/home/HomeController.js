@@ -78,9 +78,27 @@ app
         */
         $scope.selectAll = function(){
             let filteredClients = $filter('filter')($scope.clientList, $scope.filters.searchClient);
+            
+			//let filteredClients = $filter('filter')($scope.clientList, $scope.filters.searchClient);     
+            
+            //#1 - segmento
             filteredClients.forEach(function(client) {
-                client.selected = true;
+                //if segmento and transp is undefined, select all
+                if( ($scope.filters.segmento == null || $scope.filters.segmento.campo == undefined) && ( $scope.filters.transportadora == null || $scope.filters.transportadora.campo  == undefined )){
+                    client.selected = true;
+                }
+
+                //otherwise select based on does 2 filters
+                if( ( $scope.filters.segmento == null || $scope.filters.segmento.campo == undefined || client.segmento == $scope.filters.segmento.campo)
+                     && ($scope.filters.transportadora == null || $scope.filters.transportadora.campo  == undefined || client.trasportadora == $scope.filters.transportadora.campo)){
+                    client.selected = true;
+                }
+                
             });
+			
+			/*filteredClients.forEach(function(client) {
+                client.selected = true;
+            });*/
 
         }
 
