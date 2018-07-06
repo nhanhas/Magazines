@@ -104,12 +104,18 @@ foreach ($DRIVE_clients as $requestedClient) {
         }
     }
 
+
     //#3.3.3 - Iterate invoice lines to remove qtt = 0
     for($index = 0; $index < sizeof($linesToInvoice); $index++){                   
         if($linesToInvoice[$index]['qtt'] == 0){
-            unset($linesToInvoice[$index]);
+            //unset($linesToInvoice[$index]);
+            array_splice($linesToInvoice, $index, 1);
         }
     }
+
+    
+    //logData(json_encode($linesToInvoice));
+    //exit(1);
 
     //#3.4 Make invoice to selected Client or its headquarted
     if(empty($linesToInvoice)){
@@ -118,6 +124,7 @@ foreach ($DRIVE_clients as $requestedClient) {
         continue;
     }
 
+  
     //#4 - Get new instance of Ft
     $newInstanceFt = DRIVE_getNewInstance('Ft', invoiceNdoc);
     if($newInstanceFt == null){
@@ -155,6 +162,7 @@ foreach ($DRIVE_clients as $requestedClient) {
     }
    
     //logData(json_encode($newInstanceFt));
+    //exit(1);
 
     //#4.5 - Save Invoice
     $newInstanceFt = DRIVE_saveInstance('Ft', $newInstanceFt);
