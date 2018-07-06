@@ -11,7 +11,8 @@ app
             searchClient : '',
             searchHeadquarter: '',
             transportadora: '',
-            segmento: ''
+            segmento: '',
+            sendEmail: true
         };
         $scope.loading = false;
         $scope.waybillDateHour = {
@@ -242,7 +243,7 @@ app
             if(productsToWayBill.length > 0){
 
                 //call Service
-                StoreService.generateInvoicing($scope.credentials, productsToWayBill, clientsToWayBill).then(function(result){
+                StoreService.generateInvoicing($scope.credentials, productsToWayBill, clientsToWayBill, $scope.filters.sendEmail).then(function(result){
                     $scope.loading = false;
                     $scope.waybilled = true;
                     if(result.code === 0){ 

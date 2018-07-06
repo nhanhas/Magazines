@@ -98,6 +98,7 @@ foreach ($DRIVE_references as $reference) {
             continue;
         }
 
+        /*
         //#7 - Start creating Refund Doc
         $newRefundWaybill = BIZ_createDocument(refundNdoc, $customer, $DRIVE_references, 1);
         if($newRefundWaybill == null){
@@ -132,6 +133,7 @@ foreach ($DRIVE_references as $reference) {
         //#12 - Log the success of Refund waybill
         $msg = "#SUCCESS# Refund WayBill created with No.".$newRefundWaybill['fno']." - Customer ".$customer['nome']."(n.".$customer['no'].")<br>";
         logData($msg);
+        */
 
         //#10 - Sign consign		
         $newConsignWaybill = DRIVE_signDocument($newConsignWaybill);

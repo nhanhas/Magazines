@@ -15,8 +15,9 @@ $inputJSON = file_get_contents('php://input');
 $DRIVE_credentials  = json_decode($inputJSON)->credentials;
 $DRIVE_clients   = json_decode($inputJSON)->clients;
 $DRIVE_products   = json_decode($inputJSON)->products;
+$DRIVE_sendEmail   = json_decode($inputJSON)->sendEmail;
 logData($inputJSON);
-//print_r($DRIVE_clients); //Debug References
+//print_r($DRIVE_sendEmail); //Debug References
 //exit(1);
 
 /*****************************************************************/
@@ -201,13 +202,18 @@ foreach ($DRIVE_clients as $requestedClient) {
         logData($msg);
     }
 
-    //#8 - Send Document by Email
-    $printResult = DRIVE_printDocument($newInstanceFt);
-    if($printResult == null){
-        $msg = "#ERROR# on send Invoice for customer: ".$requestedClient->no." - ".$requestedClient->estab."<br>";
-        logData($msg);
+    //#8 - Send Document by Email - IF parameter is true
+    if($DRIVE_sendEmail == true){
+        $printResult = DRIVE_printDocument($newInstanceFt);
+        if($printResult == null){
+            $msg = "#ERROR# on send Invoice for customer: ".$requestedClient->no." - ".$requestedClient->estab."<br>";
+            logData($msg);
+        }else{
+            $msg = "#SUCCESS# Invoice sent by email for customer: ".$requestedClient->no." : ".$requestedClient->estab." <br>";
+            logData($msg);
+        }
     }else{
-        $msg = "#SUCCESS# Invoice sent by email for customer: ".$requestedClient->no." : ".$requestedClient->estab." <br>";
+        $msg = "#INFO# Send Email not requested by user. <br>";
         logData($msg);
     }
 
